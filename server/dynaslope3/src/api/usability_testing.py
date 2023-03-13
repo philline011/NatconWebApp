@@ -108,7 +108,7 @@ def wrap_generate_subsurface_alert():
         ts = pd.to_datetime(alert_data["ts"])
         alert_data = {
             "alert_level": alert_level,
-            "site_id": 24,
+            "site_id": alert_data['type_data']['site_id'],
             "ts": ts
         }
         data = [{
@@ -138,7 +138,7 @@ def wrap_generate_surficial_alert():
         ts = pd.to_datetime(alert_data["ts"])
         alert_data = {
             "alert_level": alert_level,
-            "site_id": 24,
+            "site_id": alert_data['type_data']['site_id'],
             "ts": ts
         }
         data = [{
@@ -170,9 +170,9 @@ def wrap_generate_rainfall_alert():
         ts = pd.to_datetime(alert_data["ts"])
         print(alert_data)
         alert_data = {
-            "rain_alert": alert_data['type_data'][0]['rain_alert'],#1-day cumulative
-            "rain_id": alert_data['type_data'][0]['rain_id'],
-            "site_id": alert_data['type_data'][0]['site_id'],
+            "rain_alert": alert_data['type_data']['rain_alert'],
+            "rain_id": alert_data['type_data']['rain_id'],
+            "site_id": alert_data['type_data']['site_id'],
             "ts": ts
         }
         data = [{
@@ -203,7 +203,7 @@ def wrap_generate_eq_alert():
 
         ts = pd.to_datetime(alert_data["ts"])
         alert_data = {
-            "site_id": 24,
+            "site_id": alert_data["type_data"]["site_id"],
             "ts": ts
         }
         data = [{
