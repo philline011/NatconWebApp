@@ -211,17 +211,17 @@ const Moms = (props) => {
       site_code: "mar",
       moms_list: [
         {
-          alert_level: 2,
+          alert_level: selectedAlertLevel,
           instance_id: featureName.instance_id,
           feature_name: featureName.name,
           feature_type: (feature_list.find((o) => o.feature_id == selectedFeatureIndex)).feature,
           report_narrative: featureDetails,
           observance_ts: moment(datetimestamp).format("YYYY-MM-DD HH:mm:ss"),
           remarks: featureDetails,
-          reporter_id: 1,
-          validator_id: 1,
+          reporter_id: 87,
+          validator_id: 87,
           location: featureLocation,
-          iomp: 1,
+          iomp: 87,
           file_name: ""
         }
       ],
@@ -398,7 +398,7 @@ const Moms = (props) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {instances.map((row) => (
+                  {instances.hasOwnProperty('data') > 0 && instances.data.map((row) => (
                     <Row key={row.date} row={row} />
                   ))}
                 </TableBody>
