@@ -453,7 +453,7 @@ const MarirongHeader = () => {
               navigate('/rainfall');
               handleClose();
             }}>
-            Rainfall plot
+            Rainfall Plot
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -467,7 +467,7 @@ const MarirongHeader = () => {
               navigate('/subsurface');
               handleClose();
             }}>
-            Subsurface plot
+            Subsurface Plot
           </MenuItem>
           <MenuItem
             onClick={() => {

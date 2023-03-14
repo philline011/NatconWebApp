@@ -18,6 +18,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormLabel from '@mui/material/FormLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import PromptModal from './modals/PromptModal';
+import InputAdornment from '@mui/material/InputAdornment';
 
 const SurficialMarkers = (props) => {
   const [open, setOpen] = useState(false);
@@ -178,7 +179,7 @@ const SurficialMarkers = (props) => {
         },
         panahon: measurement.weather,
         reporter: measurement.reporter,
-        type: measurement.type
+        type: "EVENT"
       }
 
       sendMeasurement(submitData, (response)=>{
@@ -221,10 +222,11 @@ const SurficialMarkers = (props) => {
     {name: 'markerC', label: 'C'},
     {name: 'markerD', label: 'D'},
     // {name: 'weather', label: 'Weather'},
-    {name: 'person', label: 'Nag-sukat'},
+    {name: 'person', label: 'Measurer'},
   ];
 
   const options = {
+    print: false,
     filter: true,
     selectableRows: 'multiple',
     selectableRowsOnClick: true,
@@ -291,7 +293,7 @@ const SurficialMarkers = (props) => {
           Enter new surficial marker measurements
         </DialogTitle>
         <DialogContent>
-          <FormControl error={(incomplete==true && measurement.type == "") ? true : false}>
+          {/* <FormControl error={(incomplete==true && measurement.type == "") ? true : false}>
             <FormLabel id="demo-row-radio-buttons-group-label">Type</FormLabel>
             <RadioGroup
               row
@@ -307,7 +309,7 @@ const SurficialMarkers = (props) => {
               <FormControlLabel value="EVENT" control={<Radio />} label="Event" />
             </RadioGroup>
             <FormHelperText>{(incomplete && measurement.type == "") ? "This field is required" : ""}</FormHelperText>
-          </FormControl>
+          </FormControl> */}
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Box flexDirection={"row"} style={{paddingTop: 10}}>
               <DatePicker
@@ -353,6 +355,9 @@ const SurficialMarkers = (props) => {
                   temp.A = e.target.value
                   setMeasurement(temp)
                 }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">cm</InputAdornment>,
+                }}
               />
               <TextField
                 autoFocus
@@ -365,6 +370,9 @@ const SurficialMarkers = (props) => {
                   let temp = {...measurement}
                   temp.B = e.target.value
                   setMeasurement(temp)
+                }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">cm</InputAdornment>,
                 }}
               />
               <TextField
@@ -379,6 +387,9 @@ const SurficialMarkers = (props) => {
                   temp.C = e.target.value
                   setMeasurement(temp)
                 }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">cm</InputAdornment>,
+                }}
               />
               <TextField
                 autoFocus
@@ -391,6 +402,9 @@ const SurficialMarkers = (props) => {
                   let temp = {...measurement}
                   temp.D = e.target.value
                   setMeasurement(temp)
+                }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">cm</InputAdornment>,
                 }}
               />
           </Box>
@@ -423,7 +437,7 @@ const SurficialMarkers = (props) => {
             error={(incomplete && measurement.reporter == "") ? true : false}
             helperText={(incomplete && measurement.reporter == "") ? "required" : ""}
             id="filled-helperText"
-            label="Reporter"
+            label="Measurer"
             placeholder="Ex: Juan Dela Cruz"
             variant="outlined"
             style={{width: '100%'}}

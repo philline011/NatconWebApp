@@ -28,7 +28,7 @@ const Subsurface = () => {
             variant="contained"
             onClick={handleOpen}
             sx={{marginBottom: 4}}>
-            Load Subsurface Graph per needed timestamp
+            Load Subsurface Plot per needed timestamp
           </Button>
           <Box>
             <Typography variant="h5" sx={{marginBottom: 4}}>
