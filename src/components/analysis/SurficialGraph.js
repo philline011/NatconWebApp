@@ -265,7 +265,7 @@ function prepareOptions(
 
   return {
     title: {
-      text: `<b>Surficial Data History Chart of ${site_code.toUpperCase()}</b>`,
+      text: `<b>Surficial Plot History Chart of ${site_code.toUpperCase()}</b>`,
       style: {fontSize: font_size},
       margin: 36,
       y: 18,

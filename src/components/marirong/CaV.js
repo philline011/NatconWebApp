@@ -156,6 +156,7 @@ const CaV = () => {
   ];
 
   const options = {
+    print: false,
     filter: true,
     selectableRows: 'multiple',
     selectableRowsOnClick: true,
@@ -415,7 +416,7 @@ const CaV = () => {
                 onEdit={handleEdit}
                 onDelete={confirmDelete}
                 buttons="update-delete"
-                // options={options}
+                options={options}
               />
             </Grid>
           </Grid>
@@ -849,7 +850,7 @@ const CaV = () => {
               handleSubmit()
             }} 
           >
-            {action=="add" ? "Add Household" : "Edit Household"}
+            {action=="add" ? "Add Household" : "Save Changes"}
           </Button>
         </DialogActions>
       </Dialog>

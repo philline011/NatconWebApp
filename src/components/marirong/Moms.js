@@ -24,6 +24,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { getFeatures, getInstances, insertMomsEntry, getMomsInstances, getMomsFeatures } from '../../apis/MoMs';
 import moment from 'moment';
+import PromptModal from './modals/PromptModal';
 
 const Moms = (props) => {
   const [open, setOpen] = useState(false);
@@ -33,6 +34,7 @@ const Moms = (props) => {
   const [selectedFeatureIndex, setSelectedFeatureIndex] = useState(null);
   const [selectedFeatureName, setSelectedFeatureName] = useState("");
   const [selectedAlertLevel, setSelectedAlertLevel] = useState(0);
+  const [narrative,setNarrative] = useState("")
   const [featureDetails, setFeatureDetails] = useState("")
   const [featureLocation, setFeatureLocation] = useState("");
   const [reporter, setReporter] = useState("");
@@ -58,6 +60,9 @@ const Moms = (props) => {
     else setExistingFeatureName(false)
   }, [featureName]);
 
+  useEffect(() => {
+    setFeatureDetails(selectedFeatureIndex != null ? (feature_list.find((o) => o.feature_id == selectedFeatureIndex)).details : "")
+  },[selectedFeatureIndex])
 
   // useEffect(() => {
   //   reloadDataTable();
@@ -201,11 +206,33 @@ const Moms = (props) => {
   };
 
   const handleClose = () => {
+    initialize()
     setOpen(false);
   };
 
+  const initialize = () => {
+    setDateTimestamp(new Date())
+    setSelectedFeatureIndex(null)
+    setSelectedFeatureName("")
+    setSelectedAlertLevel(0)
+    setFeatureDetails("")
+    setFeatureLocation("")
+    setReporter("")
+    setFeatureName({
+      name: "",
+      instance_id: 0
+    })
+    setFeatureNames([
+      {
+        name: "New Instance",
+        instance_id: 0
+      }
+    ])
+    
+  }
+
   const handleSubmit = () => {
-    setOpen(false);
+    
 
     let moms_entry = {
       site_code: "mar",
@@ -232,11 +259,39 @@ const Moms = (props) => {
 
     insertMomsEntry(moms_entry, (response) => {
       console.log("response:", response);
+      if(response.status == true){
+        initialize()
+        setOpenPrompt(true)
+        setErrorPrompt(false)
+        setPromptTitle("Success")
+        setNotifMessage(response.message)
+        setOpen(false);
+      }
+      else{
+        setOpenPrompt(true)
+        setErrorPrompt(true)
+        setPromptTitle("Fail")
+        setNotifMessage(response.message)
+      }
     });
   }
 
+  const [openPrompt, setOpenPrompt] = useState(false)
+  const [promptTitle, setPromptTitle] = useState("")
+  const [notifMessage, setNotifMessage] = useState("")
+  const [errorPrompt, setErrorPrompt] = useState(false)
+
   return (
     <Container>
+      
+      <PromptModal
+        isOpen={openPrompt}
+        error={errorPrompt}
+        title={promptTitle}
+        setOpenModal={setOpenPrompt}
+        notifMessage={notifMessage}
+      />
+
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           Enter new manifestation of movement
@@ -255,22 +310,6 @@ const Moms = (props) => {
             </LocalizationProvider>
           </Grid>
           <Grid item xs={12}>
-            <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}
-            >
-              <InputLabel id="demo-simple-select-label">Alert Levels</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Alert level"
-                onChange={e => {
-                  setSelectedAlertLevel(e.target.value);
-                }}
-              >
-                <MenuItem key={0} value={0}>Alert level 0</MenuItem>
-                <MenuItem key={2} value={2}>Alert level 2</MenuItem>
-                <MenuItem key={3} value={3}>Alert level 3</MenuItem>
-              </Select>
-            </FormControl>
             <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}
             >
               <InputLabel id="demo-simple-select-label">Feature Type</InputLabel>
@@ -336,13 +375,29 @@ const Moms = (props) => {
           <Grid item xs={12}>
             <TextField
               id="outlined-required"
-              label="Description"
+              label="Landslide Feature Description"
               variant="outlined"
               style={{ width: '100%', paddingBottom: 10 }}
               value={featureDetails}
               onChange={e => {
                 setFeatureDetails(e.target.value)
               }}
+              multiline
+              rows={4}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              id="outlined-required"
+              label="Narratives"
+              variant="outlined"
+              style={{ width: '100%', paddingBottom: 10 }}
+              value={narrative}
+              onChange={e => {
+                setNarrative(e.target.value)
+              }}
+              multiline
+              rows={4}
             />
           </Grid>
           <Grid item xs={12}>
@@ -369,6 +424,22 @@ const Moms = (props) => {
               }}
             />
           </Grid>
+          <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}
+            >
+              <InputLabel id="demo-simple-select-label">Alert Levels</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Alert level"
+                onChange={e => {
+                  setSelectedAlertLevel(e.target.value);
+                }}
+              >
+                <MenuItem key={0} value={0}>Alert level 0</MenuItem>
+                <MenuItem key={2} value={2}>Alert level 2</MenuItem>
+                <MenuItem key={3} value={3}>Alert level 3</MenuItem>
+              </Select>
+            </FormControl>
 
         </DialogContent>
         <DialogActions>
