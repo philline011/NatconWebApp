@@ -185,8 +185,6 @@ const SurficialMarkers = (props) => {
   const handleSubmit = () => {
     let valid = checkRequired()
 
-    console.log(valid);
-
     if (valid) {
       let dateString = `${moment(measurement.date).format("LL")} ${moment(new Date(measurement.time)).format("hh:mm A")}`
       let submitData = {
@@ -201,8 +199,6 @@ const SurficialMarkers = (props) => {
         reporter: measurement.reporter,
         type: "EVENT"
       }
-
-      console.log("submitData:", submitData);
 
       if (isUpdate) {
         deletePrevMeasurement(selectedMoId, (response) => {

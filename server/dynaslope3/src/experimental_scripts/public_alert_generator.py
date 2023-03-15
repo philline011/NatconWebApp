@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, time
 from sqlalchemy import and_, or_
 from connection import DB, create_app
 from config import APP_CONFIG
+import pandas as pd
 
 from src.experimental_scripts import tech_info_maker
 
@@ -258,7 +259,7 @@ def format_recent_retriggers(unique_positive_triggers_list, invalid_dicts, site_
             if trigger_source == "moms":
                 if site_moms_alerts_list:
                     recent_moms_details = list(filter(
-                        lambda x: x.observance_ts == item.ts_updated, site_moms_alerts_list))
+                        lambda x: pd.to_datetime(x.observance_ts) + timedelta(minutes=1) == item.ts_updated, site_moms_alerts_list))
                     # Get the highest triggering moms
                     sorted_moms_details = sorted(recent_moms_details,
                                                  key=lambda x: x.op_trigger, reverse=True)
