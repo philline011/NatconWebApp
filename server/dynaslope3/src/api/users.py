@@ -210,7 +210,8 @@ def update_profile():
                 file_name = None
                 if profile_pic:
                     profile = UserProfile.query.filter(UserProfile.user_id == user_id).first()
-                    if profile.pic_path != "":
+                    print("--", profile.pic_path)
+                    if profile.pic_path != "" and profile.pic_path != None:
                         os.remove(f"{UPLOAD_DIRECTORY}/{profile.pic_path}")
 
                     file_name = secure_filename(profile_pic.filename)
@@ -219,6 +220,11 @@ def update_profile():
                         file_name
                     ))
         except Exception as err:
+            # profile_pic.save(os.path.join(
+            #     UPLOAD_DIRECTORY,
+            #     file_name
+            # ))
+            print("-------")
             print(err)
 
     except Exception as err:

@@ -708,9 +708,12 @@ class CbewslEwiTemplate(DB.Model):
     id = DB.Column(DB.Integer, primary_key=True, nullable=False)
     alert_level = DB.Column(DB.Integer, nullable=False)
     trigger = DB.Column(DB.String(45), nullable=False)
-    trigger_description = DB.Column(DB.String(255), nullable=False)
-    commmunity_response = DB.Column(DB.String(255), nullable=False)
-    barangay_response = DB.Column(DB.String(255), nullable=False)
+    trigger_description = DB.Column(DB.String(455), nullable=False)
+    commmunity_response = DB.Column(DB.String(455), nullable=False)
+    barangay_response = DB.Column(DB.String(455), nullable=False)
+    lewc_response = DB.Column(DB.String(455), nullable=False)
+    mlgu_response = DB.Column(DB.String(455), nullable=False)
+    plgu_response = DB.Column(DB.String(455), nullable=False)
 
     def __repr__(self):
         return (f"Type <{self.__class__.__name__}> ID: {self.id} "

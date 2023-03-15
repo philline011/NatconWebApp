@@ -108,3 +108,38 @@ def save_hazard_maps    ():
    
 
     return jsonify({"status": True})
+
+@MISC_BLUEPRINT.route("/upload/save_resources", methods=["GET","POST"])
+def save_resources():
+
+    data = request.get_json()
+    if data is None:
+        data = request.form
+    uploaded_file = None
+    try:
+        uploaded_file = request.files['file'] 
+    except Exception as err:
+        print(err)
+        pass
+
+    try:
+        file_name = None
+        if uploaded_file:
+            extension = os.path.splitext(uploaded_file.filename)[1]
+        if uploaded_file and extension not in ALLOWED_EXTENSIONS:
+            feedback = 'File is not an Image'
+            status = False
+        else:
+            file_name = None
+            if uploaded_file:
+                file_name = secure_filename(uploaded_file.filename)
+                print("file_name:", file_name)
+                uploaded_file.save(os.path.join(
+                    f"{DIRECTORY}/{data['folder']}/",
+                    file_name
+                ))
+    except Exception as err:
+        print(err)
+   
+
+    return jsonify({"status": True})
