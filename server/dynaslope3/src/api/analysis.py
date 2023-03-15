@@ -15,7 +15,7 @@ from src.models.analysis import (
     RainfallGauges, DataPresenceTSM, DataPresenceTSMSchema,
     DataPresenceLoggers, DataPresenceLoggersSchema,
     EarthquakeEvents, EarthquakeEventsSchema,
-    TSMSensors)
+    TSMSensors, EarthquakeAlerts, EarthquakeAlertsSchema)
 from src.models.loggers import Loggers
 from src.utils.surficial import get_surficial_data_presence
 from src.utils.rainfall import get_all_site_rainfall_data
@@ -23,6 +23,7 @@ from src.utils.earthquake import insert_earthquake_event_to_db
 
 ANALYSIS_BLUEPRINT = Blueprint("analysis_blueprint", __name__)
 
+PROVINCES = ["Negros Occidental", "Negros Oriental", "Cebu", "Masbate", "Antique", "Siquijor", "Aklan", "Iloilo", "Romblon", "Mindoro", "Capiz", "Guimaras"]
 
 @ANALYSIS_BLUEPRINT.route("/analysis/get_latest_data_presence/<group>/<item_name>", methods=["GET"])
 @ANALYSIS_BLUEPRINT.route("/analysis/get_latest_data_presence/<group>", methods=["GET"])
@@ -93,12 +94,12 @@ def get_earthquake_events():
     offset = request.args.get("offset", default=0, type=int)
     end = datetime.now()
     start = end - timedelta(days=365)
-    # .filter(EarthquakeEvents.eq_id == 13385)
+    
     query = EarthquakeEvents.query.order_by(
-        EarthquakeEvents.ts.desc()).filter(EarthquakeEvents.ts.between(start, end)).limit(limit).offset(offset).all()
+        EarthquakeEvents.ts.desc()).filter(EarthquakeEvents.province.in_(PROVINCES)).filter(EarthquakeEvents.ts.between(start, end)).limit(limit).offset(offset).all()
     result = EarthquakeEventsSchema(many=True).dump(query)
 
-    return jsonify(result)
+    return result
 
 
 @ANALYSIS_BLUEPRINT.route("/analysis/insert_earthquake_event", methods=["POST"])
@@ -126,23 +127,14 @@ def get_earthquake_alerts():
 
     query = EarthquakeEvents.query.order_by(
         EarthquakeEvents.eq_id.desc()
-    ).filter(EarthquakeEvents.eq_alerts.any()
+    ).filter(EarthquakeEvents.province.in_(PROVINCES)).filter(EarthquakeEvents.eq_alerts.any()
              ).limit(limit).offset(offset).all()
     data = EarthquakeEventsSchema(many=True).dump(query)
 
     count = EarthquakeEvents.query.filter(EarthquakeEvents.eq_alerts.any()
                                           ).count()
 
-    result = {
-        "count": count,
-        "data": data
-    }
-
-    # query = EarthquakeAlerts.query.order_by(
-    #     EarthquakeAlerts.ea_id.desc()).all()
-    # result = EarthquakeAlertsSchema(many=True).dump(query)
-
-    return jsonify(result)
+    return data
 
 
 @ANALYSIS_BLUEPRINT.route("/analysis/save_chart_svg", methods=["POST"])
@@ -197,3 +189,14 @@ def get_on_demand_events():
     result = MonitoringOnDemandSummarySchema(many=True).dump(query)
 
     return jsonify(result)
+
+
+@ANALYSIS_BLUEPRINT.route("/analysis/get_earthquake_information", methods=["GET"])
+def get_earthquake_information():
+
+    return jsonify(
+        {
+            "eq_alerts": get_earthquake_alerts(),
+            "eq_events": get_earthquake_events()
+        }
+    )
