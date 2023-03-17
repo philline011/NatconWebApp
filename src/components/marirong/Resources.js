@@ -28,7 +28,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getFilesFromFolder } from '../../apis/Misc';
+import { getFilesFromFolder, uploadResources } from '../../apis/Misc';
 import { STORAGE_URL } from '../../config';
 import axios from 'axios';
 import fileDownload from 'js-file-download';
@@ -43,8 +43,10 @@ const Resources = () => {
     const [directory, setDirectory] = React.useState([]);
     const [isList, setList] = React.useState(false);
     const [files, setFiles] = React.useState([]);
+    const [selectedFolder, setSelectedFolder] = React.useState("");
 
     const handleOpenFolder = (folder) => {
+        setSelectedFolder(folder);
         getFilesFromFolder(folder, (response) => {
             setFiles(response)
         });
@@ -58,6 +60,23 @@ const Resources = () => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    }
+
+    const handleUpload = (uploadImage) => {
+        const formData = new FormData();
+        formData.append('file', uploadImage);
+        formData.append('folder', selectedFolder);
+
+        uploadResources(formData, data => {
+            const { status, message } = data;
+            if (status) {
+                getFilesFromFolder(selectedFolder, (response) => {
+                    setFiles(response)
+                });
+            } else {
+                console.log("Error upload", message)
+            }
+        })
     }
 
     return (
@@ -80,14 +99,24 @@ const Resources = () => {
                             </IconButton>
                         }
                     </Typography>
-                    <Button
-                        variant="contained"
-                        sx={{ float: 'right', mx: 1 }}
-                        onClick={e => {
+                    <input
+                        accept="image/*"
+                        style={{ display: 'none' }}
+                        id="raised-button-file"
+                        type="file"
+                        onChange={e => {
+                            handleUpload(e.target.files[0]);
+                        }}
+                    />
 
-                        }}>
-                        Upload File
-                    </Button>
+                    <label htmlFor="raised-button-file">
+                        <Button variant="contained"
+                            component="span"
+                            sx={{ float: 'right', mx: 1 }}
+                        >
+                            Upload File
+                        </Button>
+                    </label>
                     {
                         directory.length != 0 &&
                         <IconButton onClick={() => {
