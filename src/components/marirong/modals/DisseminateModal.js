@@ -80,7 +80,6 @@ function DisseminateModal(props) {
               e =>
                 e.alert_level === alert_level && e.trigger === trigger_source,
             );
-
             if (trigger_source === 'on demand') {
               const { on_demand } = trigger_misc;
               const { eq_id } = on_demand;
@@ -111,10 +110,14 @@ function DisseminateModal(props) {
           });
         }
         const recommended_response = ewiTemplates.find(
-          e => e.alert_level === alert_level,
+          e => e.alert_level === alert_level
         );
 
-        msg += `\nResponde (Komunidad): ${recommended_response.commmunity_response}\nResponde (LEWC):${recommended_response.barangay_response}\nSource: Leon MDRRMO`;
+        msg += `\nResponde (Barangay): ${recommended_response.barangay_response}\n`;
+        msg += `\nResponde (LEWC):${recommended_response.lewc_response}\n`;
+        msg += `\nResponde (Komunidad): ${recommended_response.commmunity_response}\n`;
+
+        msg += `Source: Leon MDRRMO`;
         setMessage(msg);
       } else {
         // need icheck if gagana din sa extended
