@@ -12,7 +12,13 @@ import {
 import React, { Fragment, useState, useEffect } from 'react';
 
 function DisseminateModal(props) {
-  const { isOpen, trigger, setOpenModal, handleSendSMS, monitoringReleases, setMonitoringReleases, setTriggers, triggers } = props;
+  const { 
+    isOpen, trigger, 
+    setOpenModal, handleSendSMS, 
+    monitoringReleases, setMonitoringReleases, 
+    setTriggers, triggers,
+    ewiTemplates, disseminateData,
+    capitalizeFirstLetter } = props;
 
   const releaseEWISms = () => {
     handleSendSMS()
@@ -23,7 +29,7 @@ function DisseminateModal(props) {
   };
 
   useEffect(() => {
-    console.log("TRIGGERS:", trigger);
+    console.log("props:", props);
   }, [isOpen]);
 
   return (
