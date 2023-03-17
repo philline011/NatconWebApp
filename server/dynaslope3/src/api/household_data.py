@@ -48,21 +48,38 @@ def get_household_data(id):
 def get_pregnant():
     try:
         data = list()
-        preg = "'%\"pregnant\": true%'"
-        preg_query = text(f"SELECT * FROM commons_db.household_data WHERE pregnant = True or members like {preg};")
-        pregnant = DB.engine.execute(preg_query)
+        pregnant_query = text(f"SELECT * FROM commons_db.household_data;")
+        pregnant = DB.engine.execute(pregnant_query)
         for row in pregnant:
-            data.append({
-                "members": row[8],
-                "disability": row[6],
-                "comorbidity": row[7],
-                "household_id": row[1],
-                "birthdate": row[4],
-                "gender": row[3],
-                "pregnant": row[5],
-                "household_head": row[2],
-                "id": row[0]
-            })
+
+            if row['pregnant'] == True:
+                data.append({
+                    "members": row[8],
+                    "disability": row[6],
+                    "comorbidity": row[7],
+                    "household_id": row[1],
+                    "birthdate": row[4],
+                    "gender": row[3],
+                    "pregnant": row[5],
+                    "household_head": row[2],
+                    "id": row[0]
+                })
+
+            for member in json.loads(row['members']):
+                if member['pregnant'] == True:
+                    temp = {
+                            "members": row[8],
+                            "disability": row[6],
+                            "comorbidity": row[7],
+                            "household_id": row[1],
+                            "birthdate": row[4],
+                            "gender": row[3],
+                            "pregnant": row[5],
+                            "household_head": row[2],
+                            "id": row[0]
+                        }
+                    if temp not in data:
+                        data.append(temp)
         return_value = {
             "status": True,
             "data": data
@@ -79,21 +96,38 @@ def get_pregnant():
 def get_comorbidity():
     try:
         data = list()
-        comor = "'%\"comorbidity\": null%'"
-        comorbidity_query = text(f"SELECT * FROM commons_db.household_data WHERE comorbidity IS NOT NULL or members not like {comor};")
+        comorbidity_query = text(f"SELECT * FROM commons_db.household_data;")
         comorbidity = DB.engine.execute(comorbidity_query)
         for row in comorbidity:
-            data.append({
-                "members": row[8],
-                "disability": row[6],
-                "comorbidity": row[7],
-                "household_id": row[1],
-                "birthdate": row[4],
-                "gender": row[3],
-                "pregnant": row[5],
-                "household_head": row[2],
-                "id": row[0]
-            })
+
+            if row['comorbidity'] != None:
+                data.append({
+                    "members": row[8],
+                    "disability": row[6],
+                    "comorbidity": row[7],
+                    "household_id": row[1],
+                    "birthdate": row[4],
+                    "gender": row[3],
+                    "pregnant": row[5],
+                    "household_head": row[2],
+                    "id": row[0]
+                })
+
+            for member in json.loads(row['members']):
+                if member['comorbidity'] != None:
+                    temp = {
+                            "members": row[8],
+                            "disability": row[6],
+                            "comorbidity": row[7],
+                            "household_id": row[1],
+                            "birthdate": row[4],
+                            "gender": row[3],
+                            "pregnant": row[5],
+                            "household_head": row[2],
+                            "id": row[0]
+                        }
+                    if temp not in data:
+                        data.append(temp)
         return_value = {
             "status": True,
             "data": data
@@ -110,21 +144,38 @@ def get_comorbidity():
 def get_disability():
     try:
         data = list()
-        disab = "'%\"disability\": null%'"
-        disability_query = text(f"SELECT * FROM commons_db.household_data WHERE disability IS NOT NULL or members not like {disab} and members not like '%[]%';")
-        disability = DB.engine.execute(disability_query)
+        diability_query = text(f"SELECT * FROM commons_db.household_data;")
+        disability = DB.engine.execute(diability_query)
         for row in disability:
-            data.append({
-                "members": row[8],
-                "disability": row[6],
-                "comorbidity": row[7],
-                "household_id": row[1],
-                "birthdate": row[4],
-                "gender": row[3],
-                "pregnant": row[5],
-                "household_head": row[2],
-                "id": row[0]
-            })
+
+            if row['disability'] != None:
+                data.append({
+                    "members": row[8],
+                    "disability": row[6],
+                    "comorbidity": row[7],
+                    "household_id": row[1],
+                    "birthdate": row[4],
+                    "gender": row[3],
+                    "pregnant": row[5],
+                    "household_head": row[2],
+                    "id": row[0]
+                })
+
+            for member in json.loads(row['members']):
+                if member['disability'] != None:
+                    temp = {
+                            "members": row[8],
+                            "disability": row[6],
+                            "comorbidity": row[7],
+                            "household_id": row[1],
+                            "birthdate": row[4],
+                            "gender": row[3],
+                            "pregnant": row[5],
+                            "household_head": row[2],
+                            "id": row[0]
+                        }
+                    if temp not in data:
+                        data.append(temp)
         return_value = {
             "status": True,
             "data": data

@@ -281,6 +281,10 @@ const Moms = (props) => {
   const [notifMessage, setNotifMessage] = useState("")
   const [errorPrompt, setErrorPrompt] = useState(false)
 
+  useEffect(() => {
+    reloadTable()
+  },[openPrompt])
+
   return (
     <Container>
       
