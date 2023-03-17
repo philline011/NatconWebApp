@@ -1,5 +1,5 @@
-import React, {useState, useCallback, useEffect} from 'react';
-import {Grid, Container, Button} from '@mui/material';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Grid, Container, Button } from '@mui/material';
 import useEmblaCarousel from 'embla-carousel-react'
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { getFilesFromFolder, uploadHazardMaps } from '../../apis/Misc';
@@ -11,80 +11,80 @@ const HazardMapping = (props) => {
     const directory = `${STORAGE_URL}/assets`
     const [images, setImages] = useState([]);
     const handleOpenFolder = () => {
-        getFilesFromFolder("assets", (response)=> {
+        getFilesFromFolder("assets", (response) => {
             setImages(response)
         });
     }
 
     useEffect(() => {
-       handleOpenFolder()
-      }, [])
+        handleOpenFolder()
+    }, [])
 
 
-    const {slides, options} = props
+    const { slides, options } = props
     const [selectedIndex, setSelectedIndex] = useState(0)
     const [emblaMainRef, emblaMainApi] = useEmblaCarousel(options)
     const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
         containScroll: 'keepSnaps',
         dragFree: false,
     })
-    
+
     const Thumb = (props) => {
-            const { selected, imgSrc, index, onClick, } = props
-            return (
+        const { selected, imgSrc, index, onClick, } = props
+        return (
             <div
                 className={"embla-thumbs__slide".concat(
-                selected ? "embla-thumbs__slide--selected" : "",
+                    selected ? "embla-thumbs__slide--selected" : "",
                 )}
             >
                 <button
-                onClick={onClick}
-                className="embla-thumbs__slide__button"
-                type="button"
+                    onClick={onClick}
+                    className="embla-thumbs__slide__button"
+                    type="button"
                 >
-                <img
-                    className="embla-thumbs__slide__img"
-                    src={imgSrc}
-                    alt="Your alt text"
-                />
+                    <img
+                        className="embla-thumbs__slide__img"
+                        src={imgSrc}
+                        alt="Your alt text"
+                    />
                 </button>
-                
+
             </div>
-            )
-        }
+        )
+    }
 
     const onThumbClick = useCallback(
         (index) => {
-          if (!emblaMainApi || !emblaThumbsApi) return
-          if (emblaThumbsApi.clickAllowed()) emblaMainApi.scrollTo(index)
+            if (!emblaMainApi || !emblaThumbsApi) return
+            if (emblaThumbsApi.clickAllowed()) emblaMainApi.scrollTo(index)
         },
         [emblaMainApi, emblaThumbsApi],
-      )
+    )
 
     const onSelect = useCallback(() => {
         if (!emblaMainApi || !emblaThumbsApi) return
         setSelectedIndex(emblaMainApi.selectedScrollSnap())
         emblaThumbsApi.scrollTo(emblaMainApi.selectedScrollSnap())
-      }, [emblaMainApi, emblaThumbsApi, setSelectedIndex])
+    }, [emblaMainApi, emblaThumbsApi, setSelectedIndex])
 
     useEffect(() => {
         if (!emblaMainApi) return
         onSelect()
         emblaMainApi.on('select', onSelect)
         emblaMainApi.on('reInit', onSelect)
-      }, [emblaMainApi, onSelect])
+    }, [emblaMainApi, onSelect])
 
-      
+
     const handleUpload = (uploadImage) => {
         const formData = new FormData();
         formData.append('file', uploadImage);
 
         uploadHazardMaps(formData, data => {
-            const {status, message} = data;
+            const { status, message } = data;
             if (status) {
                 const credentials = localStorage.getItem('credentials')
                 const parsed_credentials = JSON.parse(credentials);
-                const updated_input = {...parsed_credentials, img_length: images.length + 1}
+                const updated_input = { ...parsed_credentials, img_length: images.length + 1 }
                 localStorage.setItem('credentials', JSON.stringify(updated_input))
                 window.location.reload(true)
             } else {
@@ -93,52 +93,52 @@ const HazardMapping = (props) => {
         })
     }
 
-    return(
+    return (
         <Container>
             <Grid container>
-                <Grid item xs={12} sm={12} md={12} lg={12} sx={{textAlign: "center"}}>
+                <Grid item xs={12} sm={12} md={12} lg={12} sx={{ textAlign: "center" }}>
                     <div className="embla">
                         <div className="embla__viewport" ref={emblaMainRef}>
                             <div className="embla__container">
-                                { 
+                                {
                                     slides.map((index) => (
                                         <div className="embla__slide" key={index}>
                                             <TransformWrapper>
                                                 <TransformComponent>
                                                     {images.length > 0 && (
                                                         <img
-                                                        className="embla__slide__img"
-                                                        src={`${directory}/${images[index].filename}${images[index].extension}`}
-                                                        alt="Your alt text"
+                                                            className="embla__slide__img"
+                                                            src={`${directory}/${images[index].filename}${images[index].extension}`}
+                                                            alt="Your alt text"
                                                         />
                                                     )}
                                                 </TransformComponent>
-                                            </TransformWrapper>    
+                                            </TransformWrapper>
                                         </div>
                                     ))
                                 }
                             </div>
                         </div>
-                            <div className="embla-thumbs">
-                                <div className="embla-thumbs__viewport" ref={emblaThumbsRef}>
-                                    <div className="embla-thumbs__container">
-                                        {images.map((value, index) => (
-                                            <Thumb
-                                                onClick={() => 
-                                                    onThumbClick(index)
-                                                    }
-                                                selected={index === selectedIndex}
-                                                index={index}
-                                                imgSrc={`${directory}/${value.filename}${value.extension}`}
-                                                key={index}
-                                            />
-                                            ))}
-                                    </div>
+                        <div className="embla-thumbs">
+                            <div className="embla-thumbs__viewport" ref={emblaThumbsRef}>
+                                <div className="embla-thumbs__container">
+                                    {images.map((value, index) => (
+                                        <Thumb
+                                            onClick={() =>
+                                                onThumbClick(index)
+                                            }
+                                            selected={index === selectedIndex}
+                                            index={index}
+                                            imgSrc={`${directory}/${value.filename}${value.extension}`}
+                                            key={index}
+                                        />
+                                    ))}
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </Grid>
-                <Grid container sx={{mt: 2, mb: 6, padding: '2%'}}>
+                <Grid container sx={{ mt: 2, mb: 6, padding: '2%' }}>
                     <Grid item xs={12} sm={12} md={12} lg={7}>
                         <input
                             accept="image/*"
@@ -150,26 +150,26 @@ const HazardMapping = (props) => {
                             }}
                         />
                         <label htmlFor="raised-button-file">
-                            <Button variant="contained" 
-                                    component="span" 
-                                    sx={{float: 'right', mx: 1}}
-                                    >
+                            <Button variant="contained"
+                                component="span"
+                                sx={{ float: 'right', mx: 1 }}
+                            >
                                 Upload
                             </Button>
                         </label>
                         {images.length > 0 && (
-                            <a href={`${STORAGE_URL}/${images[selectedIndex].filename}${images[selectedIndex].extension}`} 
-                                target="_blank" 
+                            <a href={`${STORAGE_URL}/assets/${images[selectedIndex].filename}${images[selectedIndex].extension}`}
+                                target="_blank"
                                 rel="noreferrer"
+                            >
+                                <Button
+                                    variant="contained"
+                                    sx={{ float: 'right', mx: 1 }}
                                 >
-                            <Button
-                                variant="contained"
-                                sx={{float: 'right', mx: 1}}
-                                >
-                                Download
-                            </Button>
-                        </a>
-                        )} 
+                                    Download
+                                </Button>
+                            </a>
+                        )}
                     </Grid>
                 </Grid>
             </Grid>

@@ -57,9 +57,12 @@ const Resources = () => {
 
         const link = document.createElement('a');
         link.href = `${STORAGE_URL}/${folder}/${filename}`;
+        link.target = "_blank"
+        link.rel = "noreferrer"
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+
     }
 
     const handleUpload = (uploadImage) => {
