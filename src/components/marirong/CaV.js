@@ -53,6 +53,8 @@ const CaV = () => {
     let tempComorbidList = []
     
     getAllHouseholds((response)=>{
+      console.log("adadasdadsa",response)
+
       if(response.status){
         response.data.map((household) => {
           households.push({
@@ -198,8 +200,8 @@ const CaV = () => {
     birthday: new Date(),
     gender: "",
     pregnant: false,
-    disability: null,
-    comorbidity: null,
+    disability: "not specified",
+    comorbidity: "",
     disabled: false,
     comorbid: false
   })
@@ -212,8 +214,8 @@ const CaV = () => {
       birthday: new Date(),
       gender: "",
       pregnant: false,
-      disability: null,
-      comorbidity: null,
+      disability: "not specified",
+      comorbidity: "",
       disabled: false,
       comorbid: false
     })
@@ -228,8 +230,8 @@ const CaV = () => {
       birthday: new Date(),
       gender: "",
       pregnant: false,
-      disability: null,
-      comorbidity: null,
+      disability: "not specified",
+      comorbidity: "",
       disabled: false,
       comorbid: false
     })
@@ -238,15 +240,19 @@ const CaV = () => {
 
   const handleSubmit = () => {
     let tempMembers = []
-    console.log("household members",householdMembers)
+    console.log("household head rawr", householdHead.disabled)
+    console.log("household members submit",householdMembers)
+
+
     householdMembers.map((item) => {
+      console.log(item.disabled)
       tempMembers.push({
         household_member: item.household_member,
-        birthdate: moment(item.birthday).format("YYYY-MM-DD"),
+        birthdate: moment(item.birthdate).format("YYYY-MM-DD"),
         gender: item.gender,
         pregnant: item.pregnant,
-        disability: (item.disabled == true) ? item.disability : null,
-        comorbidity: (item.comorbid == true) ? item.comorbidity : null
+        disability: item.disabled ? item.disability == null ? "not specified" : item.disability : null,
+        comorbidity: item.comorbid ? item.comorbidity == null ? "not specified" : item.comorbidity : null
       })
     })
 
@@ -257,8 +263,8 @@ const CaV = () => {
       birthdate: moment(householdHead.birthday).format("YYYY-MM-DD"),
       gender: householdHead.gender,
       pregnant: householdHead.pregnant,
-      disability: (householdHead.disabled == true) ? householdHead.disability : null,
-      comorbidity: (householdHead.comorbid == true) ? householdHead.comorbidity : null,
+      disability: householdHead.disabled ? householdHead.disability == null ? "not specified" : householdHead.disability : null,
+      comorbidity: householdHead.comorbid ? householdHead.comorbidity == null ? "not specified" : householdHead.comorbidity : null,
       members: tempMembers
     }
 
@@ -327,9 +333,11 @@ const CaV = () => {
 
     let tempMembers = []
     response.members.map((item) => {
+      console.log("uwuwuw",item)
       tempMembers.push({
         household_member: item.household_member,
-        birthdate: moment(item.birthday).format("YYYY-MM-DD"),
+        // birthdate: moment(item.birthdate).format("YYYY-MM-DD"),
+        birthdate: item.birthdate,
         gender: item.gender,
         pregnant: item.pregnant,
         disability: item.disability,
@@ -339,6 +347,8 @@ const CaV = () => {
       })
     })
     setHouseholdMembers(tempMembers)
+
+    console.log("andito ka ba????",tempMembers)
 
     setOpenModal(true)
   }
@@ -725,10 +735,11 @@ const CaV = () => {
                   <LocalizationProvider dateAdapter={AdapterDayjs}>
                     <DatePicker
                       label="Birthday"
-                      value={householdMembers[index].birthday}
+                      value={householdMembers[index].birthdate}
                       onChange={(e) => {
+                        console.log(moment(new Date(e)).format("YYYY-MM-DD"))
                         let temp = [...householdMembers]
-                        temp[index].birthday = moment(new Date(e)).format("YYYY-MM-DD")
+                        temp[index].birthdate = moment(new Date(e)).format("YYYY-MM-DD")
                         setHouseholdMembers(temp)
                       }}
                       renderInput={(params) => <TextField style={{width: '49.2%', paddingBottom: 10, marginRight: '1.6%'}} {...params} />}
@@ -769,6 +780,7 @@ const CaV = () => {
                   control={<Checkbox
                     checked={householdMembers[index].disabled}
                     onChange={e => {
+                      console.log(e.target.checked)
                       let temp = [...householdMembers]
                       temp[index].disabled = e.target.checked
                       setHouseholdMembers(temp)
