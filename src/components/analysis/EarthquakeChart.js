@@ -16,6 +16,7 @@ import { Map as LeafletMap, TileLayer, Marker, Popup, Circle, CircleMarker, Pane
 import MarkerIcon from "leaflet/dist/images/marker-icon.png";
 import ShadowIcon from "leaflet/dist/images/marker-shadow.png";
 import RetinaIcon from "leaflet/dist/images/marker-icon-2x.png";
+import { getEarthquakeInformation } from "../../apis/Earthquake";
 
 const marker = L.icon({
     iconUrl: MarkerIcon,
@@ -102,9 +103,9 @@ function EarthquakeMap(props) {
     const { eqEvents } = props;
     const sites = require("./../data/sites.json")
     const state = {
-        lat: 11.786250,
-        lng: 125.019600,
-        zoom: 8
+        lat: 10.827459,
+        lng: 122.321555,
+        zoom: 9
     };
 
 
@@ -184,13 +185,23 @@ function EarthquakeMap(props) {
 
 function EarthquakeChart(props) {
     const eq = require("./../data/eq.json")
-    const { eqEvents, eqAlertsPagination, eqAlerts } = eq;
+    const { eqAlertsPagination } = eq;
     const [tab_value, setTabValue] = useState(0);
     const change_tab_value = (event, new_value) => setTabValue(new_value);
     const [eq_al_tbl_pagination, setEqAlTblPage] = useState({ limit: 5, offset: 0, count: 0 });
 
     const [chosen_events, setChosenEvents] = useState([]);
     const [eq_ev_tbl_data, setEqEventsTable] = useState([]);
+    const [eqAlerts, setEqAlerts] = useState([]);
+    const [eqEvents, setEqEvents] = useState([]);
+
+    useEffect(() => {
+        getEarthquakeInformation(data => {
+            const { eq_alerts, eq_events } = data;
+            setEqAlerts(eq_alerts);
+            setEqEvents(eq_events)
+        });
+    }, []);
 
     useEffect(() => {
         setChosenEvents([...eqEvents]);

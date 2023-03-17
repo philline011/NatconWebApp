@@ -17,6 +17,7 @@ from analysis.surficial import markeralerts
 from src.utils.extra import var_checker
 from src.models.inbox_outbox import SmsInboxUsers
 from gsm.smsparser import main as SMSMAIN
+from sqlalchemy import text
 
 SURFICIAL_BLUEPRINT = Blueprint("surficial_blueprint", __name__)
 
@@ -120,7 +121,9 @@ def extract_formatted_surficial_data_string(filter_val, start_ts=None, end_ts=No
                 "x": final_ts, "y": item.measurement,
                 "data_id": item.data_id, "mo_id": item.mo_id,
                 "unreliable_data": unreliable_data,
-                "observer_name": item.marker_observation.observer_name
+                "observer_name": item.marker_observation.observer_name,
+                "weather": item.marker_observation.weather,
+                "meas_type": item.marker_observation.meas_type
             })
 
         new_list = sorted(new_list, key=lambda i: i["x"])
@@ -504,6 +507,24 @@ def insert_surficial_marker_measurements():
         DB.session.add(inbox)
         DB.session.commit()
         # markeralerts.generate_surficial_alert(site_id=29, ts=data['date'])
+
+        feedback = {
+            "status": True
+        }
+    except Exception as err:
+        print(err)
+        feedback = {
+            "status": False
+        }
+    return jsonify(feedback)
+
+@SURFICIAL_BLUEPRINT.route("/surficial/delete_prev_measurement", methods=["POST"])
+def delete_prev_measurement():
+    try:
+        data = request.get_json()
+
+        cleanup_query = text(f"DELETE FROM analysis_db.marker_observations WHERE mo_id='{data['mo_id']}';DELETE FROM analysis_db.marker_data WHERE mo_id='{data['mo_id']}';")
+        cleanup = DB.engine.execute(cleanup_query)
 
         feedback = {
             "status": True
