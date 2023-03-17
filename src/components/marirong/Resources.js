@@ -29,6 +29,10 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getFilesFromFolder } from '../../apis/Misc';
+import { STORAGE_URL } from '../../config';
+import axios from 'axios';
+import fileDownload from 'js-file-download';
+
 
 const Resources = () => {
 
@@ -41,14 +45,19 @@ const Resources = () => {
     const [files, setFiles] = React.useState([]);
 
     const handleOpenFolder = (folder) => {
-        getFilesFromFolder(folder, (response)=> {
+        getFilesFromFolder(folder, (response) => {
             setFiles(response)
         });
     }
 
     const handleDownload = (folder, filename) => {
-        console.log(folder);
-        console.log(filename);
+        console.log(`${STORAGE_URL}/${folder}/${filename}`)
+
+        const link = document.createElement('a');
+        link.href = `${STORAGE_URL}/${folder}/${filename}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     return (
@@ -226,7 +235,7 @@ const Resources = () => {
                                                 </Typography>
                                             </CardContent>
                                             <CardActions>
-                                                <Button size="small" onClick={()=> { handleDownload(data.folder, `${data.filename}${data.extension}`) }}>Download</Button>
+                                                <Button size="small" onClick={() => { handleDownload(data.folder, `${data.filename}${data.extension}`) }}>Download</Button>
                                             </CardActions>
                                         </Card>
                                     </Grid>
