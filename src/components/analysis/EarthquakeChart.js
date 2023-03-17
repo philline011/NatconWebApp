@@ -103,8 +103,8 @@ function EarthquakeMap(props) {
     const { eqEvents } = props;
     const sites = require("./../data/sites.json")
     const state = {
-        lat: 10.827459,
-        lng: 122.321555,
+        lat: 11.154057,
+        lng: 122.483825,
         zoom: 9
     };
 
