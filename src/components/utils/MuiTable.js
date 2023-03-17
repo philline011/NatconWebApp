@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import MUIDataTable from 'mui-datatables';
 import {
   Container,
@@ -84,39 +84,41 @@ function appendActions(cmd, data) {
         // mod_set = [getEditButton(handleEdit)];
         break;
     }
-    return Object.assign({}, element, {actions: mod_set});
+    return Object.assign({}, element, { actions: mod_set });
   });
 }
 
 const MuiTable = props => {
   // cmd: cud, cu, c, cd
-  const {data, options, onView, onEdit, onDelete, buttons} = props;
-  const {columns, rows} = data;
+  const { data, options, onView, onEdit, onDelete, buttons } = props;
+  const { columns, rows } = data;
   let temp = [];
 
   rows.forEach(element => {
-    temp.push({...element, actions: [
-      <div>
-          <IconButton onClick={()=> {
+    temp.push({
+      ...element, actions: [
+        <div>
+          <IconButton onClick={() => {
             onEdit(element)
           }} arial-label="edit" component="span">
             <EditIcon />
           </IconButton>
-          <IconButton onClick={()=> {
+          <IconButton onClick={() => {
             onDelete(element)
           }} arial-label="delete" component="span">
             <DeleteIcon />
           </IconButton>
 
-          {(buttons!=undefined && buttons!="update-delete") && 
-            <IconButton onClick={()=> {
+          {(buttons != undefined && buttons != "update-delete") &&
+            <IconButton onClick={() => {
               onView(element)
             }} arial-label="view" component="span">
               <ViewModuleIcon />
             </IconButton>
           }
-      </div>
-    ]})
+        </div>
+      ]
+    })
   });
 
   return (
