@@ -34,7 +34,7 @@ const Moms = (props) => {
   const [selectedFeatureIndex, setSelectedFeatureIndex] = useState(null);
   const [selectedFeatureName, setSelectedFeatureName] = useState("");
   const [selectedAlertLevel, setSelectedAlertLevel] = useState(0);
-  const [narrative,setNarrative] = useState("")
+  const [narrative, setNarrative] = useState("")
   const [featureDetails, setFeatureDetails] = useState("")
   const [featureLocation, setFeatureLocation] = useState("");
   const [reporter, setReporter] = useState("");
@@ -62,7 +62,7 @@ const Moms = (props) => {
 
   useEffect(() => {
     setFeatureDetails(selectedFeatureIndex != null ? (feature_list.find((o) => o.feature_id == selectedFeatureIndex)).details : "")
-  },[selectedFeatureIndex])
+  }, [selectedFeatureIndex])
 
   // useEffect(() => {
   //   reloadDataTable();
@@ -228,11 +228,11 @@ const Moms = (props) => {
         instance_id: 0
       }
     ])
-    
+
   }
 
   const handleSubmit = () => {
-    
+
 
     let moms_entry = {
       site_code: "mar",
@@ -259,7 +259,7 @@ const Moms = (props) => {
 
     insertMomsEntry(moms_entry, (response) => {
       console.log("response:", response);
-      if(response.status == true){
+      if (response.status == true) {
         initialize()
         setOpenPrompt(true)
         setErrorPrompt(false)
@@ -267,7 +267,7 @@ const Moms = (props) => {
         setNotifMessage(response.message)
         setOpen(false);
       }
-      else{
+      else {
         setOpenPrompt(true)
         setErrorPrompt(true)
         setPromptTitle("Fail")
@@ -283,11 +283,11 @@ const Moms = (props) => {
 
   useEffect(() => {
     reloadTable()
-  },[openPrompt])
+  }, [openPrompt])
 
   return (
     <Container>
-      
+
       <PromptModal
         isOpen={openPrompt}
         error={errorPrompt}
@@ -429,21 +429,21 @@ const Moms = (props) => {
             />
           </Grid>
           <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}
+          >
+            <InputLabel id="demo-simple-select-label">Alert Levels</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Alert level"
+              onChange={e => {
+                setSelectedAlertLevel(e.target.value);
+              }}
             >
-              <InputLabel id="demo-simple-select-label">Alert Levels</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Alert level"
-                onChange={e => {
-                  setSelectedAlertLevel(e.target.value);
-                }}
-              >
-                <MenuItem key={0} value={0}>Alert level 0</MenuItem>
-                <MenuItem key={2} value={2}>Alert level 2</MenuItem>
-                <MenuItem key={3} value={3}>Alert level 3</MenuItem>
-              </Select>
-            </FormControl>
+              <MenuItem key={0} value={0}>Alert level 0</MenuItem>
+              <MenuItem key={2} value={2}>Alert level 2</MenuItem>
+              <MenuItem key={3} value={3}>Alert level 3</MenuItem>
+            </Select>
+          </FormControl>
 
         </DialogContent>
         <DialogActions>
@@ -469,7 +469,6 @@ const Moms = (props) => {
                     <TableCell>Location</TableCell>
                     <TableCell>Last Observance Timestamp</TableCell>
                     <TableCell>Alert Level</TableCell>
-                    <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -524,7 +523,6 @@ function Row(props) {
         <TableCell>{row.location}</TableCell>
         <TableCell>{row.moms[0].observance_ts}</TableCell>
         <TableCell>{row.moms[0].op_trigger}</TableCell>
-        <TableCell>action eme</TableCell>
       </TableRow>
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>

@@ -6,7 +6,7 @@ import moment from 'moment';
 import { updateAlertStatus } from '../../../apis/MoMs';
 
 function ValidationModal(props) {
-    const { isOpen, trigger, setOpenModal, handleValidation, triggers, setIsValidated, alertTrigger, capitalizeFirstLetter } = props;
+    const { isOpen, trigger, setOpenModal, handleValidation, triggers, setIsValidated, alertTrigger, capitalizeFirstLetter, generateDashboardData } = props;
     const [remarks, setRemarks] = useState("");
     const invalidAlert = () => {
         setOpenModal(false);
@@ -23,7 +23,8 @@ function ValidationModal(props) {
             console.log(data)
             handleValidation("Invalid alert success!");
             setRemarks("");
-            setIsValidated(true)
+            setIsValidated(true);
+            generateDashboardData();
         })
 
     }
@@ -43,7 +44,8 @@ function ValidationModal(props) {
             console.log(data)
             handleValidation("Validating alert success!");
             setRemarks("");
-            setIsValidated(true)
+            setIsValidated(true);
+            generateDashboardData();
         })
     }
 
@@ -61,7 +63,8 @@ function ValidationModal(props) {
             console.log(data)
             handleValidation("Valid alert success!");
             setRemarks("");
-            setIsValidated(true)
+            setIsValidated(true);
+            generateDashboardData();
         })
     }
     return (
@@ -75,14 +78,14 @@ function ValidationModal(props) {
             <DialogTitle id="form-dialog-title">{`Validate Alert`}
                 <IconButton
                     aria-label="close"
-                    onClick={()=> {setOpenModal(false)}}
+                    onClick={() => { setOpenModal(false) }}
                     sx={{
                         position: 'absolute',
                         right: 8,
                         top: 8,
                         color: (theme) => theme.palette.grey[500],
                     }}
-                    >
+                >
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
