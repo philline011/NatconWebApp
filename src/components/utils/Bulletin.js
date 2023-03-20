@@ -1,9 +1,12 @@
 import { Box, Grid, Typography } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import React, { Fragment } from 'react';
 import letter_header from '../../assets/phivolcs-letter-head.png';
 import letter_footer from '../../assets/phivolcs-letter-footer.png';
 
 const Bulletin = () => {
+    const location = useLocation();
+    console.log(location);
     return (
         <Fragment>
             <Grid container justifyContent='center' alignItems='flex-start'>
@@ -37,10 +40,10 @@ const Bulletin = () => {
                         border: '2px solid black',
                         padding: 2
                     }}>
-                        <Typography>Location:</Typography>
-                        <Typography>Date/Time:</Typography>
-                        <Typography>Alert Level Released:</Typography>
-                        <Typography>Recommended Response:</Typography>
+                        <Typography>Location: {location.state.siteLocation}</Typography>
+                        <Typography>Date/Time: {location.state.currentAlertTs}</Typography>
+                        <Typography>Alert Level Released: {location.state.alertLevel}</Typography>
+                        {/* <Typography>Recommended Response: {}</Typography> */}
                     </Box>
                 </Grid>
                 <Grid container>
