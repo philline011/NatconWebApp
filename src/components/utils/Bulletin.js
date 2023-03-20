@@ -49,29 +49,35 @@ const Bulletin = () => {
                 <Grid container>
                     <Grid item xs={12} md={12} lg={12} style={{marginLeft: 80, marginRight: 80}}>
                         <Typography variant='h6'><b><u>AREA SITUATION:</u></b></Typography>
-                        <Typography variant='h6'><b>GROUND MOVEMENT</b></Typography>
-                        <Typography variant='subtitle1' style={{marginLeft: 20}}><u>SURFICIAL</u></Typography>
-                        <Typography variant='subtitle1' style={{marginLeft: 20}}><u>MANIFESTATIONS OF MOVEMENT</u></Typography>
-                        <Typography variant='h6'><b>RAINFALL</b></Typography>
+
+                        {
+                            location.state.triggerSource.map((data) => (
+                                data.source.toLowerCase() == "landslide features" ? <Fragment><Typography variant='h6'><b>LANDSLIDE FEATURES</b></Typography><Typography variant='subtitle1' style={{marginLeft: 20}}><u>{data.description}</u></Typography></Fragment> :
+                                data.source.toLowerCase() == "rainfall" ? <Fragment><Typography variant='h6'><b>RAINFALL</b></Typography><Typography variant='subtitle1' style={{marginLeft: 20}}><u>{data.description}</u></Typography></Fragment> : 
+                                (data.source.toLowerCase() == "earthquake" || data.source.toLowerCase() == "surficial" || data.source.toLowerCase() == "subsurface") ? <Fragment><Typography variant='h6'><b>GROUND MOVEMENT</b></Typography><Typography variant='subtitle1' style={{marginLeft: 20}}><u>{data.description}</u></Typography></Fragment> :
+                                "N/A"
+                            ))
+                        }
+                        
                         <Typography variant='h6'><b>ELEMENTS AT RISK</b></Typography>
                         <Typography variant='subtitle1' style={{marginLeft: 20}}>46 households (237 residents), barangay hall, daycare center, chapel, basketball court</Typography>
                         <Typography variant='h6'><b><u>OTHER RECOMMENDATIONS:</u></b></Typography>
-                        <Typography variant='subtitle1'><b>For the Landslide Early Warning Committee (LEWC):</b> --insert eme--</Typography>
-                        <Typography variant='subtitle1' sx={{marginBottom: 2}}><b>For the Community:</b> --insert eme--</Typography>
+                        {
+                            location.state.lewcRP != "" ? <Typography variant='subtitle1'><b>For the Landslide Early Warning Committee (LEWC):</b> {location.state.lewcRP}</Typography> : "N/A"
+                        }
+                        {
+                            location.state.communityRP != "" ? <Typography variant='subtitle1'><b>For the Community:</b> {location.state.communityRP}</Typography> : "N/A"
+                        }
+                        {
+                            location.state.barangayRP != "" ? <Typography variant='subtitle1'><b>For the Barangay:</b> {location.state.barangayRP}</Typography> : "N/A"
+                        }
                         <Typography variant='subtitle1'><b>NOTE:</b> This bulletin contains the official alert level and recommended response of the Leon MDRRMO for Brgy. Marirong and will hold true until a new bulletin is released.</Typography>
                     </Grid>
                 </Grid>
                 <Grid container justifyContent='center' alignItems='flex-start' textAlign='center'>
-                    <Grid item xs={12} md={12} lg={12}>
-                        <img src={letter_footer}
-                            alt='letter-footer'
-                            style={{
-                                objectFit: 'contain',
-                                width: 1000,
-                                height: 200
-                            }} />
-                    </Grid>
+                    <div style={{height: 80}}/>
                 </Grid>
+
             </Box>
             </Grid>
         </Fragment>
