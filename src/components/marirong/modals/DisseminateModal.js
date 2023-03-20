@@ -10,6 +10,7 @@ import {
   Grid,
 } from '@mui/material';
 import React, { Fragment, useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 
 function DisseminateModal(props) {
@@ -25,9 +26,18 @@ function DisseminateModal(props) {
     capitalizeFirstLetter,
     ewiTemplates,
   } = props;
-  console.log(disseminateData);
+
+  const navigate = useNavigate();
   const [latest_triggers, setLatestTriggers] = [];
   const [message, setMessage] = useState('');
+
+  const [alertLevel, setAlertLevel] = useState('');
+  const [siteLocation, setSiteLocation] = useState('');
+  const [currentAlertTs, setCurrentAlertTs] = useState('');
+  const [triggerSource, setTriggerSource] = useState([]);
+  const [barangayRP, setBarangayRP] = useState('');
+  const [communityRP, setCommunityRP] = useState('');
+  const [lewcRP, setLewcRP] = useState('');
 
   const releaseEWISms = () => {
     handleSendSMS(message);
@@ -65,11 +75,21 @@ function DisseminateModal(props) {
         const { alert_level } = public_alert_symbol;
 
         site_location = `Brgy. ${barangay}, ${municipality}, ${province}`;
+        setSiteLocation(site_location);
+
         let msg = `Alert level: ${alert_level}\nLokasyon: ${site_location}\nPetsa at oras: ${moment(
           data_timestamp,
         )
           .add(30, 'minutes')
           .format('LLL')}`;
+        
+          setAlertLevel(`Alert level ${alert_level}`);
+          setCurrentAlertTs(moment(
+            data_timestamp,
+          )
+            .add(30, 'minutes')
+            .format('LLL'))
+
         if (alert_level > 0) {
           latest_event_triggers.forEach(trigger => {
             const { internal_sym, trigger_misc } = trigger;
@@ -99,6 +119,11 @@ function DisseminateModal(props) {
                 : 'On-demand Rainfall';
               msg += `\nBakit (${capitalizeFirstLetter(trig_source)}): ${template.trigger_description
                 }`;
+                let temp = [...triggerSource];
+                temp.push({
+                  source: capitalizeFirstLetter(trig_source),
+                  description: template.trigger_description
+                })
             } else {
               const trig_source =
                 trigger_source === 'moms'
@@ -106,6 +131,13 @@ function DisseminateModal(props) {
                   : trigger_source;
               msg += `\nBakit (${capitalizeFirstLetter(trig_source)}): ${template.trigger_description
                 }`;
+
+                let temp = [...triggerSource];
+                temp.push({
+                  source: capitalizeFirstLetter(trig_source),
+                  description: template.trigger_description
+                });
+                setTriggerSource(temp);
             }
           });
         }
@@ -113,10 +145,15 @@ function DisseminateModal(props) {
           e => e.alert_level === alert_level
         );
 
+
+
+        setBarangayRP(recommended_response.barangay_response);
+        setLewcRP(recommended_response.lewc_response);
+        setCommunityRP(recommended_response.commmunity_response);
+
         msg += `\nResponde (Barangay): ${recommended_response.barangay_response}\n`;
         msg += `\nResponde (LEWC):${recommended_response.lewc_response}\n`;
         msg += `\nResponde (Komunidad): ${recommended_response.commmunity_response}\n`;
-
         msg += `Source: Leon MDRRMO`;
         setMessage(msg);
       } else {
@@ -126,16 +163,48 @@ function DisseminateModal(props) {
           e => e.alert_level === public_alert_level,
         );
         let site_location = 'Brgy. Lipata, Paranas, Samar';
+        setSiteLocation(site_location)
         let msg = `\nAlert Level: ${recommended_response.alert_level
           }\nLokasyon: ${site_location}\nPetsa at oras: ${moment(data_ts)
             .add(30, 'minutes')
             .format('LLL')}`;
+        
+        setAlertLevel(`Alert Level ${recommended_response.alert_level}`);
+        setCurrentAlertTs(moment(data_ts)
+        .add(30, 'minutes')
+        .format('LLL'));
+
+        let temp = [...triggerSource];
+        temp.push({
+          source: 'Extended',
+          description: recommended_response.trigger_description
+        });
+        console.log("THIS IS TEMP:", temp);
+        setTriggerSource(temp);
+        setCommunityRP(recommended_response.commmunity_response);
+        setBarangayRP(recommended_response.barangay_response);
+
         msg += `\nBakit: ${recommended_response.trigger_description}`;
         msg += `\nResponde (Komunidad): ${recommended_response.commmunity_response}\nResponde (LEWC):${recommended_response.barangay_response}\nSource: Leon MDRRMO`;
         setMessage(msg);
       }
     }
   }, [disseminateData]);
+
+  const renderBulletin = () => {
+    console.log(message)
+    navigate("/bulletin", {
+      state: {
+        alertLevel:alertLevel,
+        siteLocation:siteLocation,
+        currentAlertTs:currentAlertTs,
+        triggerSource:triggerSource,
+        barangayRP:barangayRP,
+        communityRP:communityRP,
+        lewcRP:lewcRP
+      }
+    })
+  }
 
   return (
     <Dialog
@@ -178,8 +247,10 @@ function DisseminateModal(props) {
           color="error">
           Cancel
         </Button>
-        <Button variant="contained" onClick={releaseEWISms} color="primary">
-          Send Warning
+        <Button variant="contained" onClick={() => {
+          renderBulletin();
+        }} color="primary">
+          Render Bulletin
         </Button>
       </DialogActions>
     </Dialog>

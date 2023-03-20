@@ -29,6 +29,7 @@ import Resources from './components/marirong/Resources';
 import Feedback from './components/marirong/Feedback';
 import ChangePassword from './components/utils/ChangePassword';
 import ProfileSettings from './components/utils/ProfileSettings';
+import Bulletin from './components/utils/Bulletin';
 import './components/marirong/css/sandbox.css'
 import './components/marirong/css/embla.css'
 
@@ -79,6 +80,7 @@ const App = props => {
           {(localStorage.getItem('credentials') != null) ? 
             <Routes>
               <Route exact path="/opcen" element={<OpCen2 />} /> 
+              <Route exact path="/bulletin" element={<Bulletin />} />
               <Route exact path="/events" element={<Events />} />
               <Route exact path="/communication" element={<Communication />} />
               <Route exact path="/analysis" element={<Analysis />} />
