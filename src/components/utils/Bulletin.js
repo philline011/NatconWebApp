@@ -1,19 +1,21 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, Button } from '@mui/material';
 import { useLocation } from 'react-router-dom';
-import React, { Fragment } from 'react';
+import React, { Fragment, createRef, useState } from 'react';
 import letter_header from '../../assets/phivolcs-letter-head.png';
 import letter_footer from '../../assets/phivolcs-letter-footer.png';
+import Pdf from "react-to-pdf";
 
 const Bulletin = () => {
     const location = useLocation();
-    console.log(location);
+    const ref = createRef();
+    const [isRendering, setIsRendering] = useState(false);
     return (
         <Fragment>
             <Grid container justifyContent='center' alignItems='flex-start'>
-            <Box sx={{
+            <Box ref={ref} sx={{
                 marginTop: 10,
                 marginBottom: 10,
-                maxWidth: 1050,
+                maxWidth: isRendering == false ? 1050 : 800,
                 height: 'auto',
                 border: '2px solid black'
             }}>
@@ -79,7 +81,26 @@ const Bulletin = () => {
                 </Grid>
 
             </Box>
+            <Grid item xs={12} style={{justifyContent: 'center', textAlign: 'center'}}>
+
+                <Pdf targetRef={ref} filename="bulletin.pdf">
+                        {({ toPdf }) =>  <Button
+                        variant="contained"
+                        style={{marginButtom: 10, textAlign: 'center'}}
+                        onClick={()=> {
+                            setIsRendering(true);
+                            toPdf();
+                        }}
+                        color="primary">
+                        Download
+                    </Button>}
+                </Pdf>
             </Grid>
+            <Grid container justifyContent='center' alignItems='flex-start' textAlign='center'>
+                <div style={{height: 80}}/>
+            </Grid>
+            </Grid>
+
         </Fragment>
     );
 }
