@@ -29,11 +29,12 @@ function OnDemandModal(props) {
     const [earthquake_id, setEarthquakeId] = useState("0");
 
     const releaseOnDemand = () => {
+        const ts = new Date(request_ts)
         const input = {
             alert_level,
             approved_by: "MLGU",
             eq_id: parseInt(earthquake_id) === 0 ? null : parseInt(earthquake_id),
-            request_ts: moment(request_ts).format("YYYY-MM-DD HH:mm:ss"),
+            request_ts: moment(ts).format("YYYY-MM-DD HH:mm:ss"),
             reason,
             tech_info: reason,
             reporter_id: 1232,
