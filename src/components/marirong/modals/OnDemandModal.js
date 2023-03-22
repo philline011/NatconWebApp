@@ -44,6 +44,7 @@ function OnDemandModal(props) {
             const { status, message } = response;
             if (status) {
                 generateDashboardData();
+                setOpenModal(false);
             }
         });
     }
