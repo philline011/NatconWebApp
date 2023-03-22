@@ -830,9 +830,9 @@ function OpCen2(props) {
     setIsOpenValidationModal(!is_open_validation_modal);
   };
 
-  const handleValidation = messsage => {
+  const handleValidation = message => {
     setIsOpenValidationModal(!is_open_validation_modal);
-    setNotifMessage(messsage);
+    setNotifMessage(message);
     setIsOpenPromptModal(true);
   };
 
@@ -843,12 +843,13 @@ function OpCen2(props) {
     setIsOpenReleaseModal(!is_open_release_modal);
   };
 
-  const handleSubmitRelease = (messsage, status) => {
+  const handleSubmitRelease = (message, status) => {
     setIsOpenValidationModal(false);
-    setNotifMessage(messsage);
+    setNotifMessage(message);
     setIsOpenPromptModal(true);
     setAlertVariant(status ? 'success' : 'error');
   };
+
 
   const handleDisseminate = data => {
     setDisseminateData(data);
@@ -1195,6 +1196,9 @@ function OpCen2(props) {
         isOpen={is_open_ondemand_modal}
         setOpenModal={setIsOpenOndemandModal}
         generateDashboardData={generateDashboardData}
+        setNotifMessage={setNotifMessage}
+        setIsOpenPromptModal={setIsOpenPromptModal}
+        setAlertVariant={setAlertVariant}
       />
     </Fragment>
   );

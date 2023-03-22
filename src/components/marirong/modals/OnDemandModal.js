@@ -18,7 +18,8 @@ import moment from 'moment';
 import { sendMessage, insertOnDemandToDb, getEarthquakeEventsForLast24hrs, checkLatestSiteEventIfHasOnDemand } from '../../../apis/MoMs';
 
 function OnDemandModal(props) {
-    const { isOpen, setOpenModal, generateDashboardData } = props;
+    const { isOpen, setOpenModal, generateDashboardData, setNotifMessage,
+        setIsOpenPromptModal, setAlertVariant } = props;
     const [alert_level, setAlertLevel] = useState("");
     const [request_ts, setRequestTs] = useState("");
     const [reason, setReason] = useState("");
@@ -46,6 +47,12 @@ function OnDemandModal(props) {
             if (status) {
                 generateDashboardData();
                 setOpenModal(false);
+                setNotifMessage(message);
+                setIsOpenPromptModal(true);
+                setAlertVariant('success');
+            } else {
+                setIsOpenPromptModal(false);
+                setAlertVariant('error');
             }
         });
     }
