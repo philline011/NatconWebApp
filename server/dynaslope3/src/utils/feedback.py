@@ -50,7 +50,7 @@ def save_feedback(data, file):
         
         DB.session.add(insert_feedback)
         status = True
-        feedback = "Successfully saved activity!"
+        feedback = "Successfully submitted feedback!"
 
         DB.session.commit()
     except Exception as err:
