@@ -19,6 +19,7 @@ import FormLabel from '@mui/material/FormLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import PromptModal from './modals/PromptModal';
 import InputAdornment from '@mui/material/InputAdornment';
+import { useSnackbar } from "notistack";
 
 const SurficialMarkers = (props) => {
   const [open, setOpen] = useState(false);
@@ -45,13 +46,22 @@ const SurficialMarkers = (props) => {
     B: "",
     C: "",
     D: "",
+    E: "",
     weather: "",
     reporter: "",
     type: ""
-  })
+  });
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   useEffect(() => {
-    fetchAll()
+    fetchAll();
+  }, []);
+  
+  useEffect(() => {
+    setInterval(()=> {
+      fetchAll();
+    }, 10000)
   }, [])
 
 
@@ -66,10 +76,8 @@ const SurficialMarkers = (props) => {
 
     getSurficialData(submitData, (response) => {
       setSurficialData(response)
-      makeTable(response)
+      makeTable(response);
     })
-
-
   }
 
   const makeTable = (data) => {
@@ -92,6 +100,9 @@ const SurficialMarkers = (props) => {
             case 'D':
               tempTable[i].markerD = m.y
               break;
+            case 'E':
+                tempTable[i].markerD = m.y
+                break;
           }
         }
         else {
@@ -160,6 +171,23 @@ const SurficialMarkers = (props) => {
                 meas_type: m.meas_type
               })
               break;
+            case 'E':
+                tempTable.push({
+                  id: marker.marker_id,
+                  mo_id: m.mo_id,
+                  timestamp: m.x,
+                  date: moment.unix(m.x / 1000).format("MMMM DD, YYYY"),
+                  time: moment.unix(m.x / 1000).format("hh:mm"),
+                  person: m.observer_name,
+                  markerA: "",
+                  markerB: "",
+                  markerC: "",
+                  markerD: "",
+                  markerE: m.y,
+                  weather: m.weather,
+                  meas_type: m.meas_type
+                })
+                break;
           }
         }
 
@@ -177,7 +205,7 @@ const SurficialMarkers = (props) => {
       && measurement.reporter != ""
       && measurement.weather != ""
       && measurement.A != "" && measurement.B != ""
-      && measurement.C != "" && measurement.D != "")
+      && measurement.C != "" && measurement.D != "" && measurement.E != "")
       return true
     else return false
   }
@@ -193,7 +221,8 @@ const SurficialMarkers = (props) => {
           A: measurement.A,
           B: measurement.B,
           C: measurement.C,
-          D: measurement.D
+          D: measurement.D,
+          E: measurement.E
         },
         panahon: measurement.weather,
         reporter: measurement.reporter,
@@ -271,6 +300,7 @@ const SurficialMarkers = (props) => {
     { name: 'markerB', label: 'B' },
     { name: 'markerC', label: 'C' },
     { name: 'markerD', label: 'D' },
+    { name: 'markerE', label: 'E' },
     { name: 'person', label: 'Measurer' },
     {
       name: 'weather', label: 'Weather', options: {
@@ -295,9 +325,10 @@ const SurficialMarkers = (props) => {
       B: r[5],
       C: r[6],
       D: r[7],
-      weather: r[9][0].toUpperCase() + r[9].toLowerCase().substring(1),
-      reporter: r[8],
-      type: r[10]
+      D: r[8],
+      weather: r[10][0].toUpperCase() + r[10].toLowerCase().substring(1),
+      reporter: r[9],
+      type: r[11]
     });
     setOpen(true);
   }
@@ -309,6 +340,9 @@ const SurficialMarkers = (props) => {
     selectableRows: false,
     filterType: 'dropdown',
     responsive: 'vertical',
+    downloadOptions: {
+      filename: `surficial_marker_data_${moment().format("YYYY-MM-DD")}`
+    }, 
     // onRowsDelete: rowsDeleted => {
     // const idsToDelete = rowsDeleted.data.map (item => item.dataIndex)
     // handleMuiTableBatchDelete(idsToDelete.sort());
@@ -456,6 +490,29 @@ const SurficialMarkers = (props) => {
               InputProps={{
                 endAdornment: <InputAdornment position="end">cm</InputAdornment>,
               }}
+            />
+          </Box>
+          <Box
+            container
+            flexDirection={'row'}
+            paddingBottom={2}
+            justifyContent={"space-between"}>
+            <TextField
+                autoFocus
+                error={(incomplete && measurement.E == "") ? true : false}
+                helperText={(incomplete && measurement.E == "") ? "required" : ""}
+                label="Marker E"
+                variant="outlined"
+                defaultValue={measurement.E}
+                style={{ width: "23%", marginLeft: "1%", marginRight: "1%" }}
+                onChange={e => {
+                  let temp = { ...measurement }
+                  temp.E = e.target.value
+                  setMeasurement(temp)
+                }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">cm</InputAdornment>,
+                }}
             />
           </Box>
           <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}
