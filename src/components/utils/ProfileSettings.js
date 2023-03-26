@@ -14,6 +14,8 @@ import { STORAGE_URL } from '../../config';
 import {useNavigate} from 'react-router-dom';
 import Swal from 'sweetalert2'
 
+import PromptModal from '../marirong/modals/PromptModal';
+
 
 const ProfileSettings = () => {
     let navigate = useNavigate();
@@ -30,6 +32,11 @@ const ProfileSettings = () => {
     const [mobileNum, setMobileNum] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
+
+    const [openPrompt, setOpenPrompt] = useState(false)
+    const [promptTitle, setPromptTitle] = useState("")
+    const [notifMessage, setNotifMessage] = useState("")
+    const [errorPrompt, setErrorPrompt] = useState(false)
 
     const handleGender = event => {
         setGender(event.target.value);
@@ -155,6 +162,15 @@ const ProfileSettings = () => {
 
     return (
         <Fragment>
+
+            <PromptModal
+                isOpen={openPrompt}
+                error={errorPrompt}
+                title={promptTitle}
+                setOpenModal={setOpenPrompt}
+                notifMessage={notifMessage}
+            />
+
             <Container maxWidth="md">
                 <Grid container style={{paddingTop: '10%'}}>
                         <Card sx={{ maxWidth: 800}}>
@@ -220,18 +236,11 @@ const ProfileSettings = () => {
                                     </Grid>
                                     <Grid item xs={4}>
                                         <Typography>Suffix</Typography>
-                                        <FormControl fullWidth >
-                                            <Select
-                                                labelId="demo-simple-select-label"
+                                        <TextField id="outlined-basic" 
+                                                variant="outlined" 
                                                 value={suffix}
-                                                onChange={handleSuffix}>
-                                                    <MenuItem value={''}>{'<none>'}</MenuItem>
-                                                    <MenuItem value={'Jr'}>Jr</MenuItem>
-                                                    <MenuItem value={'Sr'}>Sr</MenuItem>
-                                                    <MenuItem value={'II'}>II</MenuItem>
-                                                    <MenuItem value={'III'}>III</MenuItem>
-                                            </Select>
-                                        </FormControl>
+                                                onChange={e => setSuffix(e.target.value)}
+                                                fullWidth />
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography>Gender</Typography>

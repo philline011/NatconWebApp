@@ -47,6 +47,7 @@ const AddActivity = (props) => {
     const [isConfirm, setIsConfirm] = useState(false);
 
     const [openPrompt, setOpenPrompt] = useState(false)
+    const [promptTitle, setPromptTitle] = useState("")
     const [notifMessage, setNotifMessage] = useState("")
     const [errorPrompt, setErrorPrompt] = useState(false)
 
@@ -116,6 +117,7 @@ const AddActivity = (props) => {
             if(response.status){
                 console.log(formData)
                 setOpenPrompt(true)
+                setPromptTitle("Success")
                 setErrorPrompt(false)
                 setNotifMessage(response.feedback)
                 setOpenModal(false);
@@ -125,6 +127,7 @@ const AddActivity = (props) => {
             else{
                 setOpenPrompt(true)
                 setErrorPrompt(true)
+                setPromptTitle("Error!")
                 setNotifMessage(response.feedback)
                 setOpenModal(false);
                 setEditElement(null)
@@ -138,6 +141,7 @@ const AddActivity = (props) => {
             <PromptModal
                 isOpen={openPrompt}
                 error={errorPrompt}
+                title={promptTitle}
                 setOpenModal={setOpenPrompt}
                 notifMessage={notifMessage}
             />
@@ -183,7 +187,7 @@ const AddActivity = (props) => {
                                 label="Event Start"
                                 value={eventStartDate}
                                 onChange={(e) => {
-                                    setEventStartDate(moment(new Date(e)).format("YYYY-MM-DD HH:mm:ss"))
+                                    setEventStartDate(moment(new Date(e)).format("YYYY-MM-DD hh:mm A"))
                                 }}
                                 renderInput={(params) => <TextField style={{width: '49%', marginRight: '2%'}} {...params} />}
                             />
@@ -191,7 +195,7 @@ const AddActivity = (props) => {
                                 label="Event End"
                                 value={eventEndDate}
                                 onChange={(e) => {
-                                    setEventEndDate(moment(new Date(e)).format("YYYY-MM-DD HH:mm:ss"))
+                                    setEventEndDate(moment(new Date(e)).format("YYYY-MM-DD hh:mm A"))
                                 }}
                                 renderInput={(params) => <TextField style={{width: '49%'}} {...params} />}
                             />
@@ -273,6 +277,10 @@ const AddActivity = (props) => {
                     <Box sx={modalStyle}>
                         <h1>Are you sure?</h1>
                         <Divider />
+                        <h3>Start Date and Time: </h3>
+                        {`${moment(eventStartDate).format("LL h:mm A")}`} 
+                        <h3>End Date and Time: </h3>
+                        {`${moment(eventEndDate).format("LL h:mm A")}`}
                         <h3>Activity Name: </h3>
                         {eventName}
                         <h3>Activity Place: </h3>
@@ -306,7 +314,7 @@ const modalStyle = {
     top: '50%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
-    width: 400,
+    width: 500,
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,

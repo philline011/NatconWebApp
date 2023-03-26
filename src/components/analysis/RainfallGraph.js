@@ -345,7 +345,7 @@ function prepareInstantaneousRainfallChartOption(row, input) {
             text: `<b>Instantaneous Rainfall Chart of ${createRainPlotSubtitle(
                 distance,
                 gauge_name,
-            )}</b><br/>As of: <b>${moment(ts_end).format('D MMM YYYY, HH:mm')}</b>`,
+            )}</b><br/>As of: <b>${moment(ts_end).format('D MMM YYYY, hh:mm A')}</b>`,
             style: { fontSize: '0.85rem' },
             margin: 26,
             y: 20,
@@ -452,7 +452,7 @@ function prepareCumulativeRainfallChartOption(row, input) {
             text: `<b>Cumulative Rainfall Chart of ${createRainPlotSubtitle(
                 distance,
                 gauge_name,
-            )}</b><br/>As of: <b>${moment(ts_end).format('D MMM YYYY, HH:mm')}</b>`,
+            )}</b><br/>As of: <b>${moment(ts_end).format('D MMM YYYY, hh:mm A')}</b>`,
             style: { fontSize: '0.85rem' },
             margin: 26,
             y: 20,
@@ -506,6 +506,7 @@ function prepareCumulativeRainfallChartOption(row, input) {
         tooltip: {
             shared: true,
             crosshairs: true,
+            xDateFormat: "%A, %b %d, %I:%M %p"
         },
         plotOptions: {
             series: {

@@ -61,20 +61,12 @@ const eq_ev_tbl_columns = [
 const eq_al_tbl_columns = [
     { name: "Timestamp" },
     { name: "Magnitude" },
-    {
-        name: "eq_id",
-        options: {
-            display: false,
-            viewColumns: false,
-            filter: false
-        }
-    },
-    {
-        name: "Sites",
-        options: {
-            filter: false
-        }
-    }
+    // {
+    //     name: "Sites",
+    //     options: {
+    //         filter: false
+    //     }
+    // }
 ];
 
 function prepareSiteAddress(site_details, include_site_code = true, position = "end", scope = "province") {
@@ -206,7 +198,7 @@ function EarthquakeChart(props) {
     useEffect(() => {
         setChosenEvents([...eqEvents]);
         const table_data = eqEvents.map(d => [
-            moment(d.ts).format("D MMM YYYY, HH:mm"),
+            moment(d.ts).format("D MMM YYYY, hh:mm A"),
             parseFloat(d.magnitude),
             d.issuer.toUpperCase(),
             d.eq_id
@@ -226,7 +218,7 @@ function EarthquakeChart(props) {
             const sites = eq_alerts.map(a => a.site.site_code.toUpperCase());
 
             return [
-                moment(d.ts).format("D MMM YYYY, HH:mm"),
+                moment(d.ts).format("D MMM YYYY, hh:mm A"),
                 parseFloat(d.magnitude),
                 d.eq_id,
                 sites.join(", ")
@@ -313,13 +305,7 @@ function EarthquakeChart(props) {
                             tab_value === 1 && (
                                 <MuiThemeProvider theme={getMuiTheme}>
                                     <MUIDataTable
-                                        title={
-                                            <Typography
-                                                variant="body1"
-                                            >
-                                                Earthquake Alerts
-                                            </Typography>
-                                        }
+                                        title= "Earthquake Alerts"
                                         columns={eq_al_tbl_columns}
                                         options={eq_al_tbl_options}
                                         data={eq_al_tbl_data}

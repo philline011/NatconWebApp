@@ -151,7 +151,7 @@ const MarirongHeader = () => {
 
   useEffect(() => {
     setInterval(() => {
-      let dt = moment().format('ddd DD-MMM-YYYY HH:mm:ss');
+      let dt = moment().format('ddd DD-MMM-YYYY hh:mm:ss A');
       setServerTime(dt);
     }, 1000);
     

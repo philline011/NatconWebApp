@@ -12,14 +12,29 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import moment from 'moment';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { getSurficialData, sendMeasurement, deletePrevMeasurement } from '../../apis/SurficialMeasurements';
+import { getSurficialData, sendMeasurement, deletePrevMeasurement, getStaffs } from '../../apis/SurficialMeasurements';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormLabel from '@mui/material/FormLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import PromptModal from './modals/PromptModal';
 import InputAdornment from '@mui/material/InputAdornment';
+import OutlinedInput from '@mui/material/OutlinedInput';
+
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
+
 import { useSnackbar } from "notistack";
+
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: 300,
+      width: 250,
+    },
+  },
+};
+
 
 const SurficialMarkers = (props) => {
   const [open, setOpen] = useState(false);
@@ -27,6 +42,7 @@ const SurficialMarkers = (props) => {
 
   const [surficialData, setSurficialData] = useState()
   const [markers, setMarkers] = useState([]);
+  const [staffs, setStaffs] = useState([])
 
   const [openPrompt, setOpenPrompt] = useState(false)
   const [promptTitle, setPromptTitle] = useState("")
@@ -48,9 +64,11 @@ const SurficialMarkers = (props) => {
     D: "",
     E: "",
     weather: "",
-    reporter: "",
+    reporter: [],
+    reporterOther: "",
     type: ""
-  });
+  })
+  const [newName, setNewName] = useState(false);
 
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
@@ -78,6 +96,10 @@ const SurficialMarkers = (props) => {
       setSurficialData(response)
       makeTable(response);
     })
+
+    getStaffs((response)=>{
+      setStaffs(response.data)
+    })
   }
 
   const makeTable = (data) => {
@@ -101,8 +123,8 @@ const SurficialMarkers = (props) => {
               tempTable[i].markerD = m.y
               break;
             case 'E':
-                tempTable[i].markerD = m.y
-                break;
+              tempTable[i].markerE = m.y
+              break;
           }
         }
         else {
@@ -113,12 +135,13 @@ const SurficialMarkers = (props) => {
                 mo_id: m.mo_id,
                 timestamp: m.x,
                 date: moment.unix(m.x / 1000).format("MMMM DD, YYYY"),
-                time: moment.unix(m.x / 1000).format("hh:mm"),
+                time: moment.unix(m.x / 1000).format("hh:mm A"),
                 person: m.observer_name,
                 markerA: m.y,
                 markerB: "",
                 markerC: "",
                 markerD: "",
+                markerE: "",
                 weather: m.weather,
                 meas_type: m.meas_type
               })
@@ -129,12 +152,13 @@ const SurficialMarkers = (props) => {
                 mo_id: m.mo_id,
                 timestamp: m.x,
                 date: moment.unix(m.x / 1000).format("MMMM DD, YYYY"),
-                time: moment.unix(m.x / 1000).format("hh:mm"),
+                time: moment.unix(m.x / 1000).format("hh:mm A"),
                 person: m.observer_name,
                 markerA: "",
                 markerB: m.y,
                 markerC: "",
                 markerD: "",
+                markerE: "",
                 weather: m.weather,
                 meas_type: m.meas_type
               })
@@ -145,12 +169,13 @@ const SurficialMarkers = (props) => {
                 mo_id: m.mo_id,
                 timestamp: m.x,
                 date: moment.unix(m.x / 1000).format("MMMM DD, YYYY"),
-                time: moment.unix(m.x / 1000).format("hh:mm"),
+                time: moment.unix(m.x / 1000).format("hh:mm A"),
                 person: m.observer_name,
                 markerA: "",
                 markerB: "",
                 markerC: m.y,
                 markerD: "",
+                markerE: "",
                 weather: m.weather,
                 meas_type: m.meas_type
               })
@@ -161,12 +186,30 @@ const SurficialMarkers = (props) => {
                 mo_id: m.mo_id,
                 timestamp: m.x,
                 date: moment.unix(m.x / 1000).format("MMMM DD, YYYY"),
-                time: moment.unix(m.x / 1000).format("hh:mm"),
+                time: moment.unix(m.x / 1000).format("hh:mm A"),
                 person: m.observer_name,
                 markerA: "",
                 markerB: "",
                 markerC: "",
                 markerD: m.y,
+                markerE: "",
+                weather: m.weather,
+                meas_type: m.meas_type
+              })
+              break;
+            case 'E':
+              tempTable.push({
+                id: marker.marker_id,
+                mo_id: m.mo_id,
+                timestamp: m.x,
+                date: moment.unix(m.x / 1000).format("MMMM DD, YYYY"),
+                time: moment.unix(m.x / 1000).format("hh:mm A"),
+                person: m.observer_name,
+                markerA: "",
+                markerB: "",
+                markerC: "",
+                markerD: "",
+                markerE: m.y,
                 weather: m.weather,
                 meas_type: m.meas_type
               })
@@ -199,7 +242,6 @@ const SurficialMarkers = (props) => {
 
   const [incomplete, setIncomplete] = useState(false)
   const checkRequired = () => {
-    console.log(measurement)
     if (measurement.date != ""
       && measurement.time != ""
       && measurement.reporter != ""
@@ -210,8 +252,12 @@ const SurficialMarkers = (props) => {
     else return false
   }
 
+  const isAlpha = (str) => {
+    return /^[a-zA-Z ]*$/.test(str);
+  }
+
   const handleSubmit = () => {
-    let valid = checkRequired()
+    let valid = checkRequired() && isAlpha(measurement.reporterOther)
 
     if (valid) {
       let dateString = `${moment(measurement.date).format("LL")} ${moment(new Date(measurement.time)).format("hh:mm A")}`
@@ -225,8 +271,8 @@ const SurficialMarkers = (props) => {
           E: measurement.E
         },
         panahon: measurement.weather,
-        reporter: measurement.reporter,
-        type: "EVENT"
+        reporter: (`${(measurement.reporter).join(' ')} ${measurement.reporterOther}`).toUpperCase(),
+        type: measurement.type
       }
 
       if (isUpdate) {
@@ -296,11 +342,11 @@ const SurficialMarkers = (props) => {
     },
     { name: 'date', label: 'Date' },
     { name: 'time', label: 'Time' },
-    { name: 'markerA', label: 'A' },
-    { name: 'markerB', label: 'B' },
-    { name: 'markerC', label: 'C' },
-    { name: 'markerD', label: 'D' },
-    { name: 'markerE', label: 'E' },
+    { name: 'markerA', label: 'A (cm)' },
+    { name: 'markerB', label: 'B (cm)' },
+    { name: 'markerC', label: 'C (cm)' },
+    { name: 'markerD', label: 'D (cm)' },
+    { name: 'markerE', label: 'E (cm)' },
     { name: 'person', label: 'Measurer' },
     {
       name: 'weather', label: 'Weather', options: {
@@ -315,6 +361,7 @@ const SurficialMarkers = (props) => {
   ];
 
   const handleRowClick = (r, i) => {
+    console.log(r)
     setIsUpdate(true);
     setPrevMeasurement(r);
     setSelectedMoId(r[1]);
@@ -325,7 +372,7 @@ const SurficialMarkers = (props) => {
       B: r[5],
       C: r[6],
       D: r[7],
-      D: r[8],
+      E: r[8],
       weather: r[10][0].toUpperCase() + r[10].toLowerCase().substring(1),
       reporter: r[9],
       type: r[11]
@@ -373,7 +420,7 @@ const SurficialMarkers = (props) => {
           {isUpdate ? "Update " : "Enter new "}surficial marker measurements
         </DialogTitle>
         <DialogContent>
-          {/* <FormControl error={(incomplete==true && measurement.type == "") ? true : false}>
+          <FormControl error={(incomplete==true && measurement.type == "") ? true : false}>
             <FormLabel id="demo-row-radio-buttons-group-label">Type</FormLabel>
             <RadioGroup
               row
@@ -389,7 +436,7 @@ const SurficialMarkers = (props) => {
               <FormControlLabel value="EVENT" control={<Radio />} label="Event" />
             </RadioGroup>
             <FormHelperText>{(incomplete && measurement.type == "") ? "This field is required" : ""}</FormHelperText>
-          </FormControl> */}
+          </FormControl>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <Box flexDirection={"row"} style={{ paddingTop: 10 }}>
               <DatePicker
@@ -407,19 +454,18 @@ const SurficialMarkers = (props) => {
                 value={measurement.time}
                 onChange={(e) => {
                   let temp = { ...measurement }
-                  console.log(e)
                   temp.time = e
-                  console.log(temp)
                   setMeasurement(temp)
                 }}
                 renderInput={(params) => <TextField style={{ width: '49%' }} {...params} />}
               />
             </Box>
           </LocalizationProvider>
+          <Typography style={{paddingTop:15}}>Marker measurements:</Typography>
           <Box
             container
             flexDirection={'row'}
-            paddingTop={2}
+            paddingTop={1}
             paddingBottom={2}
             align="center"
             justifyContent={"space-between"}>
@@ -427,15 +473,16 @@ const SurficialMarkers = (props) => {
               autoFocus
               error={(incomplete && measurement.A == "") ? true : false}
               helperText={(incomplete && measurement.A == "") ? "required" : ""}
-              label="Marker A"
+              label="A"
               variant="outlined"
               defaultValue={measurement.A}
-              style={{ width: "23%", marginRight: "1%" }}
+              style={{ width: "18%", marginRight: "1%" }}
               onChange={e => {
                 let temp = { ...measurement }
                 temp.A = e.target.value
                 setMeasurement(temp)
               }}
+              type="number"
               InputProps={{
                 endAdornment: <InputAdornment position="end">cm</InputAdornment>,
               }}
@@ -444,15 +491,16 @@ const SurficialMarkers = (props) => {
               autoFocus
               error={(incomplete && measurement.B == "") ? true : false}
               helperText={(incomplete && measurement.B == "") ? "required" : ""}
-              label="Marker B"
+              label="B"
               variant="outlined"
               defaultValue={measurement.B}
-              style={{ width: "23%", marginLeft: "1%", marginRight: "1%" }}
+              style={{ width: "18%", marginLeft: "1%", marginRight: "1%" }}
               onChange={e => {
                 let temp = { ...measurement }
                 temp.B = e.target.value
                 setMeasurement(temp)
               }}
+              type="number"
               InputProps={{
                 endAdornment: <InputAdornment position="end">cm</InputAdornment>,
               }}
@@ -461,15 +509,16 @@ const SurficialMarkers = (props) => {
               autoFocus
               error={(incomplete && measurement.C == "") ? true : false}
               helperText={(incomplete && measurement.C == "") ? "required" : ""}
-              label="Marker C"
+              label="C"
               variant="outlined"
               defaultValue={measurement.C}
-              style={{ width: "23%", marginLeft: "1%", marginRight: "1%" }}
+              style={{ width: "18%", marginLeft: "1%", marginRight: "1%" }}
               onChange={e => {
                 let temp = { ...measurement }
                 temp.C = e.target.value
                 setMeasurement(temp)
               }}
+              type="number"
               InputProps={{
                 endAdornment: <InputAdornment position="end">cm</InputAdornment>,
               }}
@@ -478,15 +527,34 @@ const SurficialMarkers = (props) => {
               autoFocus
               error={(incomplete && measurement.D == "") ? true : false}
               helperText={(incomplete && measurement.D == "") ? "required" : ""}
-              label="Marker D"
+              label="D"
               variant="outlined"
               defaultValue={measurement.D}
-              style={{ width: "23%", marginLeft: "1%", marginRight: "1%" }}
+              style={{ width: "18%", marginLeft: "1%", marginRight: "1%" }}
               onChange={e => {
                 let temp = { ...measurement }
                 temp.D = e.target.value
                 setMeasurement(temp)
               }}
+              type="number"
+              InputProps={{
+                endAdornment: <InputAdornment position="end">cm</InputAdornment>,
+              }}
+            />
+            <TextField
+              autoFocus
+              error={(incomplete && measurement.E == "") ? true : false}
+              helperText={(incomplete && measurement.E == "") ? "required" : ""}
+              label="E"
+              variant="outlined"
+              defaultValue={measurement.E}
+              style={{ width: "18%", marginLeft: "1%", marginRight: "1%" }}
+              onChange={e => {
+                let temp = { ...measurement }
+                temp.E = e.target.value
+                setMeasurement(temp)
+              }}
+              type="number"
               InputProps={{
                 endAdornment: <InputAdornment position="end">cm</InputAdornment>,
               }}
@@ -540,21 +608,66 @@ const SurficialMarkers = (props) => {
             </Select>
             <FormHelperText>{(incomplete && measurement.weather == "") ? "Required" : ""}</FormHelperText>
           </FormControl>
-          <TextField
+          
+          <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}
             error={(incomplete && measurement.reporter == "") ? true : false}
-            helperText={(incomplete && measurement.reporter == "") ? "required" : ""}
-            id="filled-helperText"
-            label="Measurer"
-            placeholder="Ex: Juan Dela Cruz"
-            variant="outlined"
-            style={{ width: '100%' }}
-            value={measurement.reporter}
-            onChange={e => {
-              let temp = { ...measurement }
-              temp.reporter = e.target.value
-              setMeasurement(temp)
-            }}
+          >
+            <InputLabel id="demo-simple-select-label">Measurer</InputLabel>
+            <Select
+              error={(incomplete && measurement.weather == "") ? true : false}
+              helperText={(incomplete && measurement.weather == "") ? "required" : ""}
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Measurer"
+              multiple
+              value={measurement.reporter}
+              onChange={e => {
+                let temp = { ...measurement }
+                temp.reporter = e.target.value
+                setMeasurement(temp)
+              }}
+              renderValue={(selected) => selected.join(', ')}
+              MenuProps = {MenuProps}
+            >
+              {staffs.map((staff) => (
+                <MenuItem key={staff.user_id} value={`${staff.first_name} ${staff.last_name}`}>
+                  {/* <Checkbox checked={measurement.reporter.indexOf(staff) > -1}/> */}
+                  <ListItemText primary={`${staff.first_name} ${staff.last_name}`} />
+                </MenuItem>
+              ))}
+            </Select>
+            <FormHelperText>{(incomplete && measurement.reporter == "") ? "Required" : ""}</FormHelperText>
+          </FormControl>
+
+          <FormControlLabel
+            control={<Checkbox
+              checked={newName}
+              onChange={e => {
+                setNewName(e.target.checked)
+              }}    
+            />} 
+            label="Add New Name"
+            style={{width:'100%'}}
           />
+          {newName &&
+            <TextField
+              id="filled-helperText"
+              label="Measurer not on the list"
+              placeholder="Ex: Juan Dela Cruz"
+              error={isAlpha(measurement.reporterOther) ? false : true}
+              helperText={isAlpha(measurement.reporterOther) ? "" : "Please input letters only"}
+              variant="outlined"
+              style={{ width: '100%' }}
+              value={measurement.reporterOther}
+              onChange={e => {
+                let temp = { ...measurement }
+                temp.reporterOther = e.target.value
+                setMeasurement(temp)
+              }}
+            />}
+          
+          
+
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} autoFocus>

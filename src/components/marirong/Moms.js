@@ -10,15 +10,6 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -26,8 +17,23 @@ import { getFeatures, getInstances, insertMomsEntry, getMomsInstances, getMomsFe
 import { uploadMomsResources, getFilesFromFolder } from '../../apis/Misc';
 import moment from 'moment';
 import PromptModal from './modals/PromptModal';
+import { makeStyles } from "@material-ui/core/styles";
+import MomsTable from './MomsTable';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    "& .MuiTextField-root": {
+      margin: theme.spacing(1)
+    }
+  },
+  textarea: {
+    resize: "both"
+  }
+}));
 
 const Moms = (props) => {
+  const classes = useStyles();
+
   const [open, setOpen] = useState(false);
   const [feature, setFeature] = useState('');
 
@@ -239,6 +245,7 @@ const Moms = (props) => {
     setSelectedFeatureName("")
     setSelectedAlertLevel(0)
     setFeatureDetails("")
+    setNarrative("")
     setFeatureLocation("")
     setReporter("")
     setFeatureName({
@@ -314,7 +321,7 @@ const Moms = (props) => {
         notifMessage={notifMessage}
       />
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} fullWidth>
         <DialogTitle>
           Enter new manifestation of movement
         </DialogTitle>
@@ -405,7 +412,7 @@ const Moms = (props) => {
                 setFeatureDetails(e.target.value)
               }}
               multiline
-              rows={4}
+              rows={6}
             />
           </Grid>
           <Grid item xs={12}>
@@ -499,32 +506,9 @@ const Moms = (props) => {
             <Grid item xs={12}>
               <Typography variant="h4">Manifestations of Movement</Typography>
             </Grid>
-            <Grid item xs={12}>
-              <Table aria-label="collapsible table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell />
-                    <TableCell>Feature Type</TableCell>
-                    <TableCell>Feature Name</TableCell>
-                    <TableCell>Location</TableCell>
-                    <TableCell>Last Observance Timestamp</TableCell>
-                    <TableCell>Alert Level</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {instances.hasOwnProperty('data') > 0 && instances.data.map((row) => (
-                    <Row key={row.date} row={row} />
-                  ))}
-                </TableBody>
-              </Table>
-              {/* <FabMuiTable
-                data={{
-                  columns: columns,
-                  rows: dummyData,
-                }}
-                options={options}
-              /> */}
-            </Grid>
+            <MomsTable 
+              instances={instances}
+            />
             <Grid item xs={12}>
               <Grid container align="center">
                 <Grid item xs={12}>
@@ -542,66 +526,5 @@ const Moms = (props) => {
   );
 };
 
-function Row(props) {
-  const { row } = props;
-  const [open, setOpen] = React.useState(false);
 
-  return (
-    <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">{row.feature.feature_type}</TableCell>
-        <TableCell>{row.feature_name}</TableCell>
-        <TableCell>{row.location}</TableCell>
-        <TableCell>{row.moms[0].observance_ts}</TableCell>
-        <TableCell>{row.moms[0].op_trigger}</TableCell>
-      </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
-                Instances
-              </Typography>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Observance Timestamp</TableCell>
-                    <TableCell>Narrative</TableCell>
-                    <TableCell>Report Timestamp</TableCell>
-                    <TableCell>Reporter</TableCell>
-                    <TableCell>Validator</TableCell>
-                    <TableCell>Remarks</TableCell>
-                    <TableCell>Alert Level</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {row.moms.map((element) => (
-                    <TableRow key={element.moms_id}>
-                      <TableCell component="th" scope="row">{element.observance_ts}</TableCell>
-                      <TableCell>{element.narrative.narrative}</TableCell>
-                      <TableCell>{element.narrative.timestamp}</TableCell>
-                      <TableCell>{`${element.reporter.first_name} ${element.reporter.last_name}`}</TableCell>
-                      <TableCell>{`${element.validator.first_name} ${element.validator.last_name}`}</TableCell>
-                      <TableCell>{element.remarks}</TableCell>
-                      <TableCell>{element.op_trigger}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
-    </React.Fragment>
-  );
-}
 export default Moms;

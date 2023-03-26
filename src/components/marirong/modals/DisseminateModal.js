@@ -220,7 +220,7 @@ function DisseminateModal(props) {
               id="filled-multiline-static"
               label="Message"
               multiline
-              rows={8}
+              rows={25}
               variant="filled"
               value={message}
               fullWidth
@@ -250,7 +250,7 @@ function DisseminateModal(props) {
         <Button variant="contained" onClick={() => {
           renderBulletin();
         }} color="primary">
-          Render Bulletin
+          Generate Bulletin
         </Button>
       </DialogActions>
     </Dialog>

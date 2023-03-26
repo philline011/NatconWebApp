@@ -177,7 +177,8 @@ function prepareCommunicationHealthChartOption(communication_health, form) {
     tooltip: {
       crosshairs: true,
       shared: true,
-      headerFormat: "Node {point.x}<br/>"
+      headerFormat: "Node {point.x}<br/>",
+      xDateFormat: "%A, %b %d, %I:%M %p"
     },
     legend: {
       align: "right",
@@ -235,7 +236,7 @@ function prepareColumnPositionChartOption(set_data, input, is_desktop) {
     },
     tooltip: {
       formatter() {
-        return `Timestamp: <b>${moment(this.series.name).format("dddd, MMM D, HH:mm")}</b><br>Depth: <b>${this.y}</b><br>Displacement: <b>${this.x}</b>`;
+        return `Timestamp: <b>${moment(this.series.name).format("dddd, MMM D, hh:mm A")}</b><br>Depth: <b>${this.y}</b><br>Displacement: <b>${this.x}</b>`;
       }
     },
     xAxis: {
@@ -299,7 +300,7 @@ function prepareDisplacementChartOption(set_data, form) {
       y: 16
     },
     subtitle: {
-      text: `As of: <b>${moment(ts_end).format("D MMM YYYY, HH:mm")}</b><br><br><b>Note: </b> (+/-) consistently increasing/decreasing trend`,
+      text: `As of: <b>${moment(ts_end).format("D MMM YYYY, hh:mm A")}</b><br><br><b>Note: </b> (+/-) consistently increasing/decreasing trend`,
       style: { fontSize: "0.6rem" }
     },
     xAxis: {
@@ -319,7 +320,8 @@ function prepareDisplacementChartOption(set_data, form) {
       }
     },
     tooltip: {
-      header: "{point.x:%Y-%m-%d}: {point.y:.2f}"
+      header: "{point.x:%Y-%m-%d}: {point.y:.2f}",
+      xDateFormat: "%A, %b %d, %I:%M %p"
     },
     plotOptions: {
       spline: {
@@ -374,7 +376,7 @@ function prepareVelocityAlertsOption(set_data, form) {
       y: 16
     },
     subtitle: {
-      text: `As of: <b>${moment(ts_end).format("D MMM YYYY, HH:mm")}</b>`,
+      text: `As of: <b>${moment(ts_end).format("D MMM YYYY, hh:mm A")}</b>`,
       style: { fontSize: "0.6rem" }
     },
     credits: {
@@ -407,7 +409,7 @@ function prepareVelocityAlertsOption(set_data, form) {
     },
     tooltip: {
       formatter() {
-        return `<b>${moment(this.x).format("DD MMM YYYY, HH:mm")}</b>`;
+        return `<b>${moment(this.x).format("DD MMM YYYY, hh:mm A")}</b>`;
       }
     },
     plotOptions: {
@@ -635,7 +637,8 @@ function createGeneralNodeChart(series_name, data, input) {
     },
     tooltip: {
       crosshairs: true,
-      shared: true
+      shared: true,
+      xDateFormat: "%A, %b %d, %I:%M %p"
     },
     plotOptions: {
       series: {
