@@ -180,8 +180,6 @@ def update_profile():
 
     data = request.get_json()
 
-
-
     try:
         if data is None:
             data = request.form
@@ -208,9 +206,8 @@ def update_profile():
                 status = False
             else:
                 file_name = None
-                if profile_pic:
+                if profile_pic != "":
                     profile = UserProfile.query.filter(UserProfile.user_id == user_id).first()
-                    print("--", profile.pic_path)
                     if profile.pic_path != "" and profile.pic_path != None:
                         os.remove(f"{UPLOAD_DIRECTORY}/{profile.pic_path}")
 
