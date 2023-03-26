@@ -140,6 +140,39 @@ def save_resources():
                 ))
     except Exception as err:
         print(err)
-   
+    return jsonify({"status": True})
 
+@MISC_BLUEPRINT.route("/misc/get_all_staff_users", methods=["GET"])
+def get_all_staff_users():
+    return_val = {}
+    try:
+        temp = list()
+        query = "SELECT user_id, first_name, last_name FROM commons_db.users INNER JOIN commons_db.user_accounts ON commons_db.users.user_id = commons_db.user_accounts.user_fk_id;"
+        entries = DB.engine.execute(query)
+        for row in entries:
+            temp.append({
+                "user_id": row['user_id'],
+                "first_name": row['first_name'],
+                "last_name": row['last_name'],
+            })
+        
+        return_val = {
+            "status": True,
+            "data": temp
+        }
+    except Exception as err:
+        return_val = {
+            "status": False,
+            "data": []
+        }
+    finally:
+        return jsonify(return_val)
+
+@MISC_BLUEPRINT.route("/delete_file", methods=["GET","POST"])
+def delete_file():
+    try:
+        data = request.get_json()
+        os.remove(f"{DIRECTORY}/{data['folder']}/{data['filename']}")
+    except Exception as err:
+        print(err)
     return jsonify({"status": True})
