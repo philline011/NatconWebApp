@@ -20,7 +20,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import {getAllHouseholds, 
   getSummary, addHousehold, 
   editHousehold, deleteHousehold,
-  getPregnant, getComorbid, getDisabled} from '../../apis/CapacityAndVulnerability'
+  getPregnant, getComorbid, getDisabled, getSenior, getChildren, getToddler} from '../../apis/CapacityAndVulnerability'
 import PromptModal from './modals/PromptModal';
 
 const CaV = () => {
@@ -34,6 +34,9 @@ const CaV = () => {
   const [pregnantList, setPregnantList] = useState([])
   const [disabledList, setDisabledList] = useState([])
   const [comorbidList, setComorbidList] = useState([])
+  const [seniorList, setSeniorList] = useState([])
+  const [childrenList, setChildrenList] = useState([])
+  const [toddlerList, setToddlerList] = useState([])
   const [listDisplay, setListDisplay] = useState()
 
   useEffect(() => {
@@ -46,11 +49,17 @@ const CaV = () => {
     let tempVulnerableCount = {
       pregnant: 0,
       disabled: 0,
-      comorbid: 0
+      comorbid: 0,
+      senior: 0,
+      children: 0,
+      toddler: 0
     }
     let tempPregnantList = []
     let tempDisabledList = []
     let tempComorbidList = []
+    let tempSeniorList = []
+    let tempChildrenList = []
+    let tempToddlerList = []
     
     getAllHouseholds((response)=>{
       console.log("adadasdadsa",response)
@@ -74,13 +83,14 @@ const CaV = () => {
       }
     })
 
-    console.log(households)
-
     getSummary((response)=>{
       if(response.status){
         tempVulnerableCount.pregnant = response.pregnant_count
         tempVulnerableCount.disabled = response.disability_count
         tempVulnerableCount.comorbid = response.comorbidity_count
+        tempVulnerableCount.senior = response.senior_count
+        tempVulnerableCount.children = response.children_count
+        tempVulnerableCount.toddler = response.toddler_count
         setVulnerableCount(tempVulnerableCount)
       }
     })
@@ -148,6 +158,69 @@ const CaV = () => {
       }
     })
 
+    getSenior((response)=>{
+      if(response.status){
+        response.data.map((household) => {
+          let members = JSON.parse(household.members)
+          tempSeniorList.push({
+            house_hold_no: household.household_id,
+            head: household.household_head,
+            count: members.length,
+            birthday: household.birthdate,
+            gender: household.gender,
+            pregnant: household.pregnant,
+            disability: household.disability,
+            comorbidity: household.comorbidity,
+            members: members,
+            id: household.id
+          })
+        })
+        setSeniorList(tempSeniorList)
+      }
+    })
+
+    getChildren((response)=>{
+      if(response.status){
+        response.data.map((household) => {
+          let members = JSON.parse(household.members)
+          tempChildrenList.push({
+            house_hold_no: household.household_id,
+            head: household.household_head,
+            count: members.length,
+            birthday: household.birthdate,
+            gender: household.gender,
+            pregnant: household.pregnant,
+            disability: household.disability,
+            comorbidity: household.comorbidity,
+            members: members,
+            id: household.id
+          })
+        })
+        setChildrenList(tempChildrenList)
+      }
+    })
+
+    getToddler((response)=>{
+      if(response.status){
+        response.data.map((household) => {
+          let members = JSON.parse(household.members)
+          tempToddlerList.push({
+            house_hold_no: household.household_id,
+            head: household.household_head,
+            count: members.length,
+            birthday: household.birthdate,
+            gender: household.gender,
+            pregnant: household.pregnant,
+            disability: household.disability,
+            comorbidity: household.comorbidity,
+            members: members,
+            id: household.id
+          })
+        })
+        setToddlerList(tempToddlerList)
+      }
+    })
+
   }
 
   const columns = [
@@ -164,8 +237,20 @@ const CaV = () => {
     selectableRowsOnClick: true,
     filterType: 'checkbox',
     responsive: 'vertical',
+    downloadOptions: {
+      filename: `household_data_${moment().format("YYYY-MM-DD")}`
+    }, 
     onRowsDelete: rowsDeleted => {
-      // const idsToDelete = rowsDeleted.data.map (item => item.dataIndex)
+      const idsToDelete = rowsDeleted.data.map (item => item.dataIndex)
+
+      idsToDelete.forEach(element => {
+        handleDelete(householdData[element].id)
+      });
+
+      setOpenPrompt(true);
+      setErrorPrompt(false);
+      setPromptTitle("Success");
+      setNotifMessage("Successfully delete household data.");
       // handleMuiTableBatchDelete(idsToDelete.sort());
     },
   };
@@ -333,7 +418,6 @@ const CaV = () => {
 
     let tempMembers = []
     response.members.map((item) => {
-      console.log("uwuwuw",item)
       tempMembers.push({
         household_member: item.household_member,
         // birthdate: moment(item.birthdate).format("YYYY-MM-DD"),
@@ -346,18 +430,14 @@ const CaV = () => {
         comorbid: item.comorbidity != null ? true : false,
       })
     })
-    setHouseholdMembers(tempMembers)
-
-    console.log("andito ka ba????",tempMembers)
-
-    setOpenModal(true)
+    setHouseholdMembers(tempMembers);
+    setOpenModal(true);
   }
 
   const [deleteID,setDeleteID] = useState(null)
 
   const confirmDelete = (response) => {
     setAction("delete")
-    console.log("Confirm",response)
     setOpenPrompt(true)
     setErrorPrompt(false)
     setPromptTitle("Are you sure you want to delete this household?")
@@ -366,27 +446,34 @@ const CaV = () => {
     setDeleteID(response)
   }
 
-  const handleDelete = () => {
-    console.log(deleteID.id)
-
-    deleteHousehold({id: deleteID.id}, (response) => {
+  const handleDelete = (passedId = null) => {
+    let id_to_delete = null;
+    if (passedId === null) {
+      id_to_delete = deleteID.id;
+    } else {
+      id_to_delete = passedId;
+    }
+    deleteHousehold({id: id_to_delete}, (response) => {
       if(response.status == true){
         initialize()
-        setOpenModal(false)
-        setOpenPrompt(true)
-        setErrorPrompt(false)
-        setPromptTitle("Success")
-        setNotifMessage(response.message)
+          if (passedId != null) {
+            setOpenModal(false)
+            setOpenPrompt(true)
+            setErrorPrompt(false)
+            setPromptTitle("Success")
+            setNotifMessage(response.message)
+          }
         fetchAll()
       }
       else{
-        setOpenPrompt(true)
-        setErrorPrompt(true)
-        setPromptTitle("Fail")
-        setNotifMessage(response.message)
+        if (passedId != null) {
+          setOpenPrompt(true)
+          setErrorPrompt(true)
+          setPromptTitle("Fail")
+          setNotifMessage(response.message)
+        }
         initialize()
       }
-      console.log(response)
     })
   }
 
@@ -528,6 +615,81 @@ const CaV = () => {
                 </CardActions>
               </Card>
             </Grid>
+            <Grid item xs={4}>
+              <Card sx={{minWidth: '100%'}}>
+                <CardContent>
+                  <Typography
+                    sx={{fontSize: 14}}
+                    color="text.secondary"
+                    gutterBottom>
+                    Senior Citizens
+                  </Typography>
+                  <Typography variant="h5" component="div"></Typography>
+                  <Typography variant="body2">
+                    No. of Senior Citizen: {vulnerableCount.senior}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                <Button size="small" 
+                    onClick={()=>{
+                      setListDisplay("senior")
+                      handleOpen()
+                    }}>
+                    View details
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+            <Grid item xs={4}>
+              <Card sx={{minWidth: '100%'}}>
+                <CardContent>
+                  <Typography
+                    sx={{fontSize: 14}}
+                    color="text.secondary"
+                    gutterBottom>
+                    Childrens
+                  </Typography>
+                  <Typography variant="h5" component="div"></Typography>
+                  <Typography variant="body2">
+                    No. of Children (Ages 6 to 12): {vulnerableCount.children}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                <Button size="small" 
+                    onClick={()=>{
+                      setListDisplay("children")
+                      handleOpen()
+                    }}>
+                    View details
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
+            <Grid item xs={4}>
+              <Card sx={{minWidth: '100%'}}>
+                <CardContent>
+                  <Typography
+                    sx={{fontSize: 14}}
+                    color="text.secondary"
+                    gutterBottom>
+                    Childrens
+                  </Typography>
+                  <Typography variant="h5" component="div"></Typography>
+                  <Typography variant="body2">
+                    No. of Children (Ages 0 to 5): {vulnerableCount.toddler}
+                  </Typography>
+                </CardContent>
+                <CardActions>
+                <Button size="small" 
+                    onClick={()=>{
+                      setListDisplay("toddler")
+                      handleOpen()
+                    }}>
+                    View details
+                  </Button>
+                </CardActions>
+              </Card>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
@@ -545,6 +707,9 @@ const CaV = () => {
             List of households with {(listDisplay=="pregnant") ? "pregnant woman" 
               : (listDisplay=="disabled") ? "PWD/s "
               : (listDisplay=="comorbid") ? "person/s with comorbidity"
+              : (listDisplay=="senior") ? "Senior Citizens"
+              : (listDisplay=="children") ? "Childrens (Ages 6 to 12)"
+              : (listDisplay=="toddler") ? "Childrens (Ages 0 to 5"
               : ""}
           </DialogContentText>
           <FabMuiTable
@@ -554,6 +719,9 @@ const CaV = () => {
               (listDisplay=="pregnant") ? pregnantList 
               : (listDisplay=="disabled") ? disabledList 
               : (listDisplay=="comorbid") ? comorbidList
+              : (listDisplay=="senior") ? seniorList
+              : (listDisplay=="children") ? childrenList
+              : (listDisplay=="toddler") ? toddlerList
               : [],
             }}
             onEdit={handleEdit}

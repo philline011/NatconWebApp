@@ -57,6 +57,32 @@ export const uploadResources = (input, callback) => {
     });
 }
 
+export const uploadMomsResources = (input, callback) => {
+  const api_link = `${API_URL}/api/upload/moms_images`;
+  axios
+    .post(api_link, input)
+    .then(response => {
+      const { data } = response;
+      console.log('File uploaded', data);
+      callback(data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
+export const deleteFile = (folder, filename, callback) => {
+  const api_link = `${API_URL}/api/delete_file`;
+  axios
+    .post(api_link, {folder: folder, filename: filename})
+    .then(response => {
+      callback();
+    })
+    .catch(error => {
+      console.error(error);
+    });
+}
+
 export const getNumberOfFiles = (folder, callback) => {
   const api_link = `${API_URL}/api/misc/get_files/${folder}`;
   axios

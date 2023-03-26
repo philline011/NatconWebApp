@@ -42,6 +42,7 @@
     "react-scripts": "^4.0.3",
     "react-to-pdf": "^0.0.14",
     "react-zoom-pan-pinch": "^2.2.0",
+    "sweetalert2": "^11.7.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

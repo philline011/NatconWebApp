@@ -14,6 +14,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { getFeatures, getInstances, insertMomsEntry, getMomsInstances, getMomsFeatures } from '../../apis/MoMs';
+import { uploadMomsResources, getFilesFromFolder } from '../../apis/Misc';
 import moment from 'moment';
 import PromptModal from './modals/PromptModal';
 import { makeStyles } from "@material-ui/core/styles";
@@ -59,6 +60,12 @@ const Moms = (props) => {
   const [instanceID, setInstanceID] = useState(null);
 
   const [existingFeatureName, setExistingFeatureName] = useState(false)
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    let credentials = JSON.parse(localStorage.getItem('credentials'));
+    setUserId(credentials.user.user_id)
+  }, []);
 
   useEffect(() => {
     let check = featureNames.find((o) => o.name === featureName.name)
@@ -200,8 +207,24 @@ const Moms = (props) => {
         setInstances(response)
       }
     })
-
   }
+
+  const handleUpload = (uploadImage) => {
+    const formData = new FormData();
+    formData.append('file', uploadImage);
+    formData.append('folder', 'moms_images');
+
+    uploadMomsResources(formData, data => {
+        const { status, message } = data;
+        if (status) {
+            getFilesFromFolder('moms_images', (response) => {
+                // setFiles(response)
+            });
+        } else {
+            console.log("Error upload", message)
+        }
+    })
+}
 
   const handleChange = event => {
     setFeature(event.target.value);
@@ -239,8 +262,6 @@ const Moms = (props) => {
   }
 
   const handleSubmit = () => {
-
-
     let moms_entry = {
       site_code: "mar",
       moms_list: [
@@ -251,21 +272,18 @@ const Moms = (props) => {
           feature_type: (feature_list.find((o) => o.feature_id == selectedFeatureIndex)).feature,
           report_narrative: featureDetails,
           observance_ts: moment(datetimestamp).format("YYYY-MM-DD HH:mm:ss"),
-          remarks: narrative,
-          reporter_id: 87,
-          validator_id: 87,
+          remarks: featureDetails,
+          reporter_id: userId,
+          validator_id: userId,
           location: featureLocation,
-          iomp: 87,
+          iomp: userId,
           file_name: ""
         }
       ],
       uploads: []
     };
 
-    console.log("moms_entry:", moms_entry);
-
     insertMomsEntry(moms_entry, (response) => {
-      console.log("response:", response);
       if (response.status == true) {
         initialize()
         setOpenPrompt(true)
@@ -450,6 +468,28 @@ const Moms = (props) => {
               <MenuItem key={2} value={2}>Alert level 2</MenuItem>
               <MenuItem key={3} value={3}>Alert level 3</MenuItem>
             </Select>
+          </FormControl>
+          <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}>
+            <input
+                accept="image/*"
+                style={{ display: 'none' }}
+                id="raised-button-file"
+                type="file"
+                multiple
+                onChange={e => {
+                  console.log(e.target.files)
+                    // handleUpload(e.target.files[0]);
+                }}
+            />
+
+            <label htmlFor="raised-button-file" style={{textAlign: 'center'}}>
+                <Button variant="contained"
+                    component="span"
+                    sx={{ mx: 1 }}
+                >
+                    Upload MoMs Images
+                </Button>
+            </label>
           </FormControl>
 
         </DialogContent>
