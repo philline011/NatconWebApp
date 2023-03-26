@@ -28,15 +28,15 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getFilesFromFolder, uploadResources } from '../../apis/Misc';
+import { getFilesFromFolder, uploadResources, deleteFile } from '../../apis/Misc';
 import { STORAGE_URL } from '../../config';
 import axios from 'axios';
 import fileDownload from 'js-file-download';
-
+import Swal from 'sweetalert2'
 
 const Resources = () => {
 
-    const FOLDER_LIST = ['advisories', 'communications', 'iec materials', 'plans', 'reports', 'resource capabilities', 'risk assessments', 'other'];
+    const FOLDER_LIST = ['advisories', 'communications', 'iec materials', 'plans', 'reports', 'resource capabilities', 'risk assessments', 'other', 'Manifestation of Movements Images'];
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
@@ -63,6 +63,32 @@ const Resources = () => {
         link.click();
         document.body.removeChild(link);
 
+    }
+
+    const handleDelete = (folder, filename) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+          }).then((result) => {
+            if (result.isConfirmed) {
+
+                deleteFile(folder, filename, (response) => {
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                      )
+                    getFilesFromFolder(folder, (response) => {
+                        setFiles(response)
+                    });
+                });
+            }
+          })
     }
 
     const handleUpload = (uploadImage) => {
@@ -238,6 +264,17 @@ const Resources = () => {
                                         </IconButton>
                                         <Typography style={{ fontWeight: 'bold' }}>OTHERS</Typography>
                                     </Grid>
+                                    <Grid item xs={12}>
+                                        <IconButton onClick={() => {
+                                            let temp = [...directory];
+                                            temp.push("Manifestation of Movements Images")
+                                            setDirectory(temp);
+                                            handleOpenFolder("moms_images");
+                                        }} arial-label="edit" component="span">
+                                            <FolderIcon style={{ height: 200, width: 200 }} />
+                                        </IconButton>
+                                        <Typography style={{ fontWeight: 'bold' }}>Manifestation of Movements Images</Typography>
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -263,11 +300,12 @@ const Resources = () => {
                                                     File type: {data.extension.toUpperCase()}
                                                 </Typography>
                                                 <Typography variant="body2" color="text.secondary">
-                                                    {data.size} MB
+                                                    {Math.round((data.size + Number.EPSILON) * 100) / 100} MB
                                                 </Typography>
                                             </CardContent>
                                             <CardActions>
                                                 <Button size="small" onClick={() => { handleDownload(data.folder, `${data.filename}${data.extension}`) }}>Download</Button>
+                                                <Button size="small" onClick={() => { handleDelete(data.folder, `${data.filename}${data.extension}`) }}>Delete</Button>
                                             </CardActions>
                                         </Card>
                                     </Grid>

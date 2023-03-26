@@ -66,14 +66,21 @@ const Events = (props) => {
   ];
 
   const options = {
+    print: false,
     filter: true,
     selectableRows: 'multiple',
     selectableRowsOnClick: true,
     filterType: 'checkbox',
     responsive: 'vertical',
+    downloadOptions: {
+      filename: `events_${moment().format("YYYY-MM-DD")}`
+    }, 
     onRowsDelete: rowsDeleted => {
-      // const idsToDelete = rowsDeleted.data.map (item => item.dataIndex)
-      // handleMuiTableBatchDelete(idsToDelete.sort());
+      const idsToDelete = rowsDeleted.data.map (item => item.dataIndex)
+
+      idsToDelete.forEach(element => {
+        handleDelete({activity_id: activity[element].id})
+      });
     },
   };
 
@@ -114,29 +121,38 @@ const Events = (props) => {
     if(response != undefined) setDeleteID(response)
   }
 
-  const handleDelete = () => {
-    let tempDelete = {
-      activity_id: deleteID != null ? deleteID.id : calendarEvent.id
+  const handleDelete = (passedId = null) => {
+    let tempDelete = null;
+    if (passedId === null) {
+      tempDelete = {
+        activity_id: deleteID != null ? deleteID.id : calendarEvent.id
+      }
+    } else {
+      tempDelete = passedId;
     }
+
     deleteEvent(tempDelete, (response) => {
       if(response.status == true){
         setOpenPrompt(true)
-        setErrorPrompt(false)
-        setPromptTitle("Success")
-        setNotifMessage("Activity successfully deleted!", response.message)
-        setConfirmation(false)
+        if (passedId != null) {
+          setErrorPrompt(false)
+          setPromptTitle("Success")
+          setNotifMessage("Activity successfully deleted!", response.message)
+          setConfirmation(false)
+        }
         getAllEvents()
         setDeleteID(null)
       }
       else{
-        setOpenPrompt(true)
-        setErrorPrompt(true)
-        setPromptTitle("Fail")
-        setNotifMessage(response.message)
-        setConfirmation(false)
-        setDeleteID(null)
+        if (passedId != null) {
+          setOpenPrompt(true)
+          setErrorPrompt(true)
+          setPromptTitle("Fail")
+          setNotifMessage(response.message)
+          setConfirmation(false)
+          setDeleteID(null)
+        }
       }
-      console.log(response)
     })
   }
 
@@ -388,6 +404,7 @@ const Events = (props) => {
             onEdit={handleEdit}
             onDelete={confirmDelete}
             buttons="update-delete"
+            options={options}
         />
       </Grid>
     </Grid>
