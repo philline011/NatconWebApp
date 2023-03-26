@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import {
   Grid, Typography, Button, Box, Modal, TextField,
   Checkbox, FormLabel, FormControl, FormControlLabel, FormGroup, FormHelperText
@@ -9,8 +9,10 @@ import SurficialGraph from '../analysis/SurficialGraph';
 import SubsurfaceGraph from '../analysis/SubsurfaceGraph';
 import LandslideFeaturesTable from '../analysis/LandslideFeaturesTable';
 import EarthquakeChart from '../analysis/EarthquakeChart';
+import MomsTable from './MomsTable';
+import { getInstances } from '../../apis/MoMs';
 
-const Analysis = () => {
+const Analysis = (props) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -28,9 +30,23 @@ const Analysis = () => {
     });
   };
 
+  const [instances, setInstances] = useState([])
+  
+  const reloadTable = () => {
+    getInstances((response) => {
+      if (response) {
+        setInstances(response)
+      }
+    })
+
+  }
+
+  useEffect(() => {
+    reloadTable()
+  }, [props])
+
   const { rainfall, surficial, subsurface } = state;
   const error = [rainfall, surficial, subsurface].filter((v) => v).length === 0;
-
 
   return (
     <Fragment>
@@ -56,7 +72,12 @@ const Analysis = () => {
           Subsurface Data
         </Typography>
         <SubsurfaceGraph />
-        <LandslideFeaturesTable />
+        <Typography variant='h5' sx={{ marginBottom: 4, marginTop: 8 }}>
+          Manifestations of Movement
+        </Typography>
+        <MomsTable
+          instances = {instances} 
+        />
         <Typography variant='h5' sx={{ marginBottom: 4, marginTop: 8 }}>
           Earthquake Proximity Map
         </Typography>

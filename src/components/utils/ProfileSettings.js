@@ -12,6 +12,8 @@ import moment from 'moment';
 import { updateProfile } from '../../apis/ProfileUpdating';
 import { STORAGE_URL } from '../../config';
 
+import PromptModal from '../marirong/modals/PromptModal';
+
 
 const ProfileSettings = () => {
 
@@ -27,6 +29,11 @@ const ProfileSettings = () => {
     const [mobileNum, setMobileNum] = useState('');
     const [profilePicture, setProfilePicture] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
+
+    const [openPrompt, setOpenPrompt] = useState(false)
+    const [promptTitle, setPromptTitle] = useState("")
+    const [notifMessage, setNotifMessage] = useState("")
+    const [errorPrompt, setErrorPrompt] = useState(false)
 
     const handleGender = event => {
         setGender(event.target.value);
@@ -131,7 +138,12 @@ const ProfileSettings = () => {
                 updated_input.user = {...updated_input.user, ...input}
                 updated_input.profile = {...updated_input.profile, ...prof_input}
                 localStorage.setItem('credentials', JSON.stringify(updated_input))
-                window.location.reload(true)
+                // window.location.reload(true)
+
+                setOpenPrompt(true)
+                setErrorPrompt(false)
+                setPromptTitle("Success")
+                setNotifMessage(message)
                 console.log("Success!", message)
             } else {
                 console.log("Failed!", message)
@@ -142,6 +154,15 @@ const ProfileSettings = () => {
 
     return (
         <Fragment>
+
+            <PromptModal
+                isOpen={openPrompt}
+                error={errorPrompt}
+                title={promptTitle}
+                setOpenModal={setOpenPrompt}
+                notifMessage={notifMessage}
+            />
+
             <Container maxWidth="md">
                 <Grid container style={{paddingTop: '10%'}}>
                         <Card sx={{ maxWidth: 800}}>
@@ -207,18 +228,11 @@ const ProfileSettings = () => {
                                     </Grid>
                                     <Grid item xs={4}>
                                         <Typography>Suffix</Typography>
-                                        <FormControl fullWidth >
-                                            <Select
-                                                labelId="demo-simple-select-label"
+                                        <TextField id="outlined-basic" 
+                                                variant="outlined" 
                                                 value={suffix}
-                                                onChange={handleSuffix}>
-                                                    <MenuItem value={''}>{'<none>'}</MenuItem>
-                                                    <MenuItem value={'Jr'}>Jr</MenuItem>
-                                                    <MenuItem value={'Sr'}>Sr</MenuItem>
-                                                    <MenuItem value={'II'}>II</MenuItem>
-                                                    <MenuItem value={'III'}>III</MenuItem>
-                                            </Select>
-                                        </FormControl>
+                                                onChange={e => setSuffix(e.target.value)}
+                                                fullWidth />
                                     </Grid>
                                     <Grid item xs={6}>
                                         <Typography>Gender</Typography>

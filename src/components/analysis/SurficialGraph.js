@@ -1436,12 +1436,8 @@ function prepareOptions(
   const font_size = isWidthDown(width, 'sm') ? '1rem' : '0.90rem';
 
   let subtitle = `As of: <b>${moment(end_date).format(
-    'D MMM YYYY, HH:mm',
+    'D MMM YYYY, hh:mm A',
   )}</b>`;
-  if (!is_end_of_shift) {
-    subtitle +=
-      '<br/><i>Note: Click data points to access several options.</i>';
-  }
 
   let min_x = start_date;
   if ((is_end_of_shift || start === 'None') && data.length > 0) {
@@ -1570,6 +1566,7 @@ function prepareOptions(
     tooltip: {
       shared: true,
       crosshairs: true,
+      xDateFormat: "%A, %b %d, %I:%M %p"
     },
     plotOptions: {
       line: {
@@ -1820,7 +1817,7 @@ function SurficialGraph(props) {
           </Grid>
         </Grid>
       </div>
-      <ClickPointModal
+      {/* <ClickPointModal
         open={is_open_click_modal}
         setIsOpenClickModal={setIsOpenClickModal}
         chosenPoint={chosen_point}
@@ -1828,7 +1825,7 @@ function SurficialGraph(props) {
         setShowTrending={setShowTrending}
         setGenerateTrending={setGenerateTrending}
         setSurficialDataTagModal={setSurficialDataTagModal}
-      />
+      /> */}
 
       <UpdateDeleteModal
         chosenPoint={chosen_point}

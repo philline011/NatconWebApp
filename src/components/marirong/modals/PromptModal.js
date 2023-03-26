@@ -8,7 +8,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 
 
 function PromptModal(props) {
-    const { isOpen, setOpenModal, notifMessage, error, title, confirmation, callback } = props;
+    const { isOpen, setOpenModal, notifMessage, error, title, confirmation, alertVariant, callback } = props;
 
     const closeModal = () => {
         setOpenModal(false);

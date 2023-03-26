@@ -17,8 +17,12 @@ import React, { Fragment, useState, useEffect } from 'react';
 import moment from 'moment';
 import { sendMessage, insertOnDemandToDb, getEarthquakeEventsForLast24hrs, checkLatestSiteEventIfHasOnDemand } from '../../../apis/MoMs';
 
+import PromptModal from './PromptModal';
+
 function OnDemandModal(props) {
-    const { isOpen, setOpenModal, generateDashboardData } = props;
+    const { isOpen, setOpenModal, generateDashboardData,
+        setIsOpenPromptModal, setAlertVariant } = props;
+     
     const [alert_level, setAlertLevel] = useState("");
     const [request_ts, setRequestTs] = useState("");
     const [reason, setReason] = useState("");
@@ -28,12 +32,18 @@ function OnDemandModal(props) {
     const [earthquake_events, setEarthquakeEvents] = useState("");
     const [earthquake_id, setEarthquakeId] = useState("0");
 
+    const [openPrompt, setOpenPrompt] = useState(false)
+    const [promptTitle, setPromptTitle] = useState("")
+    const [notifMessage, setNotifMessage] = useState("")
+    const [errorPrompt, setErrorPrompt] = useState(false)
+
     const releaseOnDemand = () => {
+        const ts = new Date(request_ts)
         const input = {
             alert_level,
             approved_by: "MLGU",
             eq_id: parseInt(earthquake_id) === 0 ? null : parseInt(earthquake_id),
-            request_ts: moment(request_ts).format("YYYY-MM-DD HH:mm:ss"),
+            request_ts: moment(ts).format("YYYY-MM-DD HH:mm:ss"),
             reason,
             tech_info: reason,
             reporter_id: 1232,
@@ -44,6 +54,18 @@ function OnDemandModal(props) {
             const { status, message } = response;
             if (status) {
                 generateDashboardData();
+                setOpenModal(false);
+
+                setOpenPrompt(true)
+                setErrorPrompt(false)
+                setPromptTitle("Success")
+                setNotifMessage(message)
+                console.log("Success!", message)
+            } else {
+                setOpenPrompt(true)
+                setErrorPrompt(true)
+                setPromptTitle("Fail")
+                setNotifMessage("Internal server error. Contact Developers")
             }
         });
     }
@@ -94,138 +116,149 @@ function OnDemandModal(props) {
         console.log(trigger_type, alert_level)
     }, [trigger_type, alert_level]);
     return (
-        <Dialog
-            fullWidth
-            fullScreen={false}
-            open={isOpen}
-            aria-labelledby="form-dialog-title">
-            <DialogTitle id="form-dialog-title">Release on-demand warning</DialogTitle>
-            <DialogContent>
-                <Grid container spacing={1}>
-                    <Grid item xs={12} sm={12} md={12} lg={12}>
-                        <FormControl component="fieldset" style={{ display: "flex", marginTop: 16 }}>
-                            <FormLabel component="legend" style={{ textAlign: "center", marginBottom: 8 }}>
-                                On-demand options
-                            </FormLabel>
+        <Fragment>
 
-                            <RadioGroup
-                                aria-label="choose_alert_level"
-                                name="choose_alert_level"
-                                value={alert_level}
-                                onChange={handleChangeAlertLevel}
-                                row
-                                style={{ justifyContent: "space-around" }}
-                            >
-                                <FormControlLabel
-                                    value="1"
-                                    control={<Radio color="primary" />}
-                                    label="Raise/Extend Alert"
-                                    key="d1"
-                                />
+            <PromptModal
+                isOpen={openPrompt}
+                error={errorPrompt}
+                title={promptTitle}
+                setOpenModal={setOpenPrompt}
+                notifMessage={notifMessage}
+            />
+        
+            <Dialog
+                fullWidth
+                fullScreen={false}
+                open={isOpen}
+                aria-labelledby="form-dialog-title">
+                <DialogTitle id="form-dialog-title">Release on-demand warning</DialogTitle>
+                <DialogContent>
+                    <Grid container spacing={1}>
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <FormControl component="fieldset" style={{ display: "flex", marginTop: 16 }}>
+                                <FormLabel component="legend" style={{ textAlign: "center", marginBottom: 8 }}>
+                                    On-demand options
+                                </FormLabel>
 
-                                {
-                                    has_on_demand && <FormControlLabel
-                                        value="0"
+                                <RadioGroup
+                                    aria-label="choose_alert_level"
+                                    name="choose_alert_level"
+                                    value={alert_level}
+                                    onChange={handleChangeAlertLevel}
+                                    row
+                                    style={{ justifyContent: "space-around" }}
+                                >
+                                    <FormControlLabel
+                                        value="1"
                                         control={<Radio color="primary" />}
-                                        label="Lower/End Alert"
-                                        key="d"
+                                        label="Raise/Extend Alert"
+                                        key="d1"
                                     />
-                                }
 
-                            </RadioGroup>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={12} md={12} lg={12}>
-                        <FormControl component="fieldset" style={{ display: "flex", marginTop: 16 }}>
-                            <FormLabel component="legend" style={{ textAlign: "center", marginBottom: 8 }}>
-                                Trigger type
-                            </FormLabel>
+                                    {
+                                        has_on_demand && <FormControlLabel
+                                            value="0"
+                                            control={<Radio color="primary" />}
+                                            label="Lower/End Alert"
+                                            key="d"
+                                        />
+                                    }
 
-                            <RadioGroup
-                                aria-label="choose_trigger_type"
-                                name="choose_trigger_type"
-                                value={trigger_type}
-                                onChange={haddleTriggerType}
-                                row
-                                style={{ justifyContent: "space-around" }}
-                            >
-                                <FormControlLabel
-                                    value="rain"
-                                    control={<Radio color="primary" />}
-                                    label="Rainfall"
-                                    key="rain"
-                                />
-                                <FormControlLabel
-                                    value="eq"
-                                    control={<Radio color="primary" />}
-                                    label="Earthquake"
-                                    key="eq"
-                                />
-                            </RadioGroup>
-                        </FormControl>
-                    </Grid>
-                    {trigger_type === "eq" && (
-                        <Grid item xs={12} sm={12} md={12} lg={12} style={{ alignSelf: "center", textAlign: "center" }}>
-                            <InputLabel id="demo-simple-select-label">Earthquake events</InputLabel>
-                            <Select
-                                labelId="eq-event-select-standard-label"
-                                id="eq-event-select-standard"
-                                value={earthquake_id}
-                                onChange={e => setEarthquakeId(e.target.value)}
-                                fullWidth
-                            >
-                                <MenuItem value="0">
-                                    <em>None</em>
-                                </MenuItem>
-                                {
-                                    earthquake_events.length > 0 && (
-                                        earthquake_events.map((row, index) => {
-                                            const { magnitude, ts, province, eq_id } = row;
-                                            const timestamp = moment(ts).format("LLL");
-                                            return (
-                                                <MenuItem value={`${eq_id}`} key={index}>{timestamp} @ {province} with Magnitude {parseFloat(magnitude)}</MenuItem>
-                                            );
-                                        })
-                                    )
-                                }
-                            </Select>
+                                </RadioGroup>
+                            </FormControl>
                         </Grid>
-                    )
-                    }
-                    <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: 10 }}>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DateTimePicker
-                                renderInput={(props) => <TextField {...props} style={{ width: "100%" }} />}
-                                label="Date and Time"
-                                value={request_ts}
-                                onChange={(newValue) => {
-                                    setRequestTs(newValue);
-                                }}
-                            />
-                        </LocalizationProvider>
+                        <Grid item xs={12} sm={12} md={12} lg={12}>
+                            <FormControl component="fieldset" style={{ display: "flex", marginTop: 16 }}>
+                                <FormLabel component="legend" style={{ textAlign: "center", marginBottom: 8 }}>
+                                    Trigger type
+                                </FormLabel>
+
+                                <RadioGroup
+                                    aria-label="choose_trigger_type"
+                                    name="choose_trigger_type"
+                                    value={trigger_type}
+                                    onChange={haddleTriggerType}
+                                    row
+                                    style={{ justifyContent: "space-around" }}
+                                >
+                                    <FormControlLabel
+                                        value="rain"
+                                        control={<Radio color="primary" />}
+                                        label="Rainfall"
+                                        key="rain"
+                                    />
+                                    <FormControlLabel
+                                        value="eq"
+                                        control={<Radio color="primary" />}
+                                        label="Earthquake"
+                                        key="eq"
+                                    />
+                                </RadioGroup>
+                            </FormControl>
+                        </Grid>
+                        {trigger_type === "eq" && (
+                            <Grid item xs={12} sm={12} md={12} lg={12} style={{ alignSelf: "center", textAlign: "center" }}>
+                                <InputLabel id="demo-simple-select-label">Earthquake events</InputLabel>
+                                <Select
+                                    labelId="eq-event-select-standard-label"
+                                    id="eq-event-select-standard"
+                                    value={earthquake_id}
+                                    onChange={e => setEarthquakeId(e.target.value)}
+                                    fullWidth
+                                >
+                                    <MenuItem value="0">
+                                        <em>None</em>
+                                    </MenuItem>
+                                    {
+                                        earthquake_events.length > 0 && (
+                                            earthquake_events.map((row, index) => {
+                                                const { magnitude, ts, province, eq_id } = row;
+                                                const timestamp = moment(ts).format("LLL");
+                                                return (
+                                                    <MenuItem value={`${eq_id}`} key={index}>{timestamp} @ {province} with Magnitude {parseFloat(magnitude)}</MenuItem>
+                                                );
+                                            })
+                                        )
+                                    }
+                                </Select>
+                            </Grid>
+                        )
+                        }
+                        <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: 10 }}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                    renderInput={(props) => <TextField {...props} style={{ width: "100%" }} />}
+                                    label="Date and Time"
+                                    value={request_ts}
+                                    onChange={(newValue) => {
+                                        setRequestTs(newValue);
+                                    }}
+                                />
+                            </LocalizationProvider>
+                        </Grid>
+                        <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: 10 }}>
+                            <TextField
+                                multiline
+                                rows={4}
+                                value={reason}
+                                onChange={event => setReason(event.target.value)}
+                                id="outlined-basic" label="Reason" variant="outlined" fullWidth />
+                        </Grid>
                     </Grid>
-                    <Grid item xs={12} sm={12} md={12} lg={12} style={{ marginTop: 10 }}>
-                        <TextField
-                            multiline
-                            rows={4}
-                            value={reason}
-                            onChange={event => setReason(event.target.value)}
-                            id="outlined-basic" label="Reason" variant="outlined" fullWidth />
-                    </Grid>
-                </Grid>
-            </DialogContent>
-            <DialogActions>
-                <Button
-                    variant="contained"
-                    onClick={() => setOpenModal(false)}
-                    color="error">
-                    Cancel
-                </Button>
-                <Button variant="contained" onClick={releaseOnDemand} color="primary">
-                    Release On-demand
-                </Button>
-            </DialogActions>
-        </Dialog>
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        variant="contained"
+                        onClick={() => setOpenModal(false)}
+                        color="error">
+                        Cancel
+                    </Button>
+                    <Button variant="contained" onClick={releaseOnDemand} color="primary">
+                        Release On-demand
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </Fragment>
     );
 }
 

@@ -248,9 +248,14 @@ function HeaderAlertInformation(props) {
               }
 
             </Typography>
-            <h3>Response (MDRRMO): {reponses.municipyo_response ? reponses.municipyo_response : `N/A`}</h3>
-            <h3>Response (LEWC at Barangay): {reponses.barangay_response ? reponses.barangay_response : `N/A`}</h3>
-            <h3>Response (Komunidad): {reponses.commmunity_response ? reponses.commmunity_response : `N/A`}</h3>
+            <Grid container justifyContent={"center"} marginTop={2}>
+              <Grid style={{width: "85%"}}>
+                <h3>Response (MDRRMO): {reponses.municipyo_response ? reponses.municipyo_response : `N/A`}</h3>
+                <h3>Response (LEWC at Barangay): {reponses.barangay_response ? reponses.barangay_response : `N/A`}</h3>
+                <h3>Response (Komunidad): {reponses.commmunity_response ? reponses.commmunity_response : `N/A`}</h3>
+              </Grid>
+            </Grid>
+            
             <Divider variant="middle" style={{ paddingBottom: 10 }} />
           </Grid>
         </Grid>
