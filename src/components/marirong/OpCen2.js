@@ -1201,6 +1201,7 @@ function OpCen2(props) {
         isOpen={is_open_ondemand_modal}
         setOpenModal={setIsOpenOndemandModal}
         generateDashboardData={generateDashboardData}
+        notifMessage={notif_message}
         setNotifMessage={setNotifMessage}
         setIsOpenPromptModal={setIsOpenPromptModal}
         setAlertVariant={setAlertVariant}
