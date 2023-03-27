@@ -13,12 +13,13 @@ import Box from '@mui/material/Box';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { getFeatures, getInstances, insertMomsEntry, getMomsInstances, getMomsFeatures } from '../../apis/MoMs';
 import { uploadMomsResources, getFilesFromFolder } from '../../apis/Misc';
+import { getFeatures, getInstances, insertMomsEntry, getMomsInstances, getMomsFeatures, getStaffs } from '../../apis/MoMs';
 import moment from 'moment';
 import PromptModal from './modals/PromptModal';
 import { makeStyles } from "@material-ui/core/styles";
 import MomsTable from './MomsTable';
+import ListItemText from '@mui/material/ListItemText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,6 +31,15 @@ const useStyles = makeStyles(theme => ({
     resize: "both"
   }
 }));
+
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: 200,
+      width: 250,
+    },
+  },
+};
 
 const Moms = (props) => {
   const classes = useStyles();
@@ -44,7 +54,11 @@ const Moms = (props) => {
   const [narrative, setNarrative] = useState("")
   const [featureDetails, setFeatureDetails] = useState("")
   const [featureLocation, setFeatureLocation] = useState("");
-  const [reporter, setReporter] = useState("");
+  const [reporter, setReporter] = useState({
+    user_id: "",
+    first_name: "",
+    last_name: ""
+  });
   const [featureName, setFeatureName] = useState({
     name: "",
     instance_id: 0
@@ -58,6 +72,7 @@ const Moms = (props) => {
 
   const [instances, setInstances] = useState([])
   const [instanceID, setInstanceID] = useState(null);
+  const [staffs, setStaffs] = useState([])
 
   const [existingFeatureName, setExistingFeatureName] = useState(false)
   const [userId, setUserId] = useState(null);
@@ -73,9 +88,9 @@ const Moms = (props) => {
     else setExistingFeatureName(false)
   }, [featureName]);
 
-  useEffect(() => {
-    setFeatureDetails(selectedFeatureIndex != null ? (feature_list.find((o) => o.feature_id == selectedFeatureIndex)).details : "")
-  }, [selectedFeatureIndex])
+  // useEffect(() => {
+  //   setFeatureDetails(selectedFeatureIndex != null ? (feature_list.find((o) => o.feature_id == selectedFeatureIndex)).details : "")
+  // }, [selectedFeatureIndex])
 
   // useEffect(() => {
   //   reloadDataTable();
@@ -194,10 +209,13 @@ const Moms = (props) => {
       });
     })
 
+    setFeatureDetails(selectedFeatureIndex != null ? (feature_list.find((o) => o.feature_id == selectedFeatureIndex)).details : "")
+
   }, [selectedFeatureIndex]);
 
   useEffect(() => {
     reloadTable()
+
   }, [props])
 
 
@@ -206,6 +224,9 @@ const Moms = (props) => {
       if (response) {
         setInstances(response)
       }
+    })
+    getStaffs((response)=>{
+      setStaffs(response.data)
     })
   }
 
@@ -224,6 +245,8 @@ const Moms = (props) => {
             console.log("Error upload", message)
         }
     })
+
+
 }
 
   const handleChange = event => {
@@ -247,7 +270,11 @@ const Moms = (props) => {
     setFeatureDetails("")
     setNarrative("")
     setFeatureLocation("")
-    setReporter("")
+    setReporter({
+      user_id: "",
+      first_name: "",
+      last_name: ""
+    })
     setFeatureName({
       name: "",
       instance_id: 0
@@ -272,8 +299,8 @@ const Moms = (props) => {
           feature_type: (feature_list.find((o) => o.feature_id == selectedFeatureIndex)).feature,
           report_narrative: featureDetails,
           observance_ts: moment(datetimestamp).format("YYYY-MM-DD HH:mm:ss"),
-          remarks: featureDetails,
-          reporter_id: userId,
+          remarks: narrative,
+          reporter_id: reporter.user_id,
           validator_id: userId,
           location: featureLocation,
           iomp: userId,
@@ -441,18 +468,35 @@ const Moms = (props) => {
               }}
             />
           </Grid>
+          
           <Grid item xs={12}>
-            <TextField
-              id="outlined-required"
-              label="Reporter"
-              variant="outlined"
-              style={{ width: '100%', paddingBottom: 10 }}
-              value={reporter}
-              onChange={e => {
-                setReporter(e.target.value)
-              }}
-            />
+            <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}
+            >
+              <InputLabel id="demo-simple-select-label">Reporter</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                label="Reporter"
+                value={`${reporter.first_name} ${reporter.last_name}`}
+                onChange={e => {
+                  console.log(e)
+                  setReporter(e.target.value)
+                }}
+                renderValue={(selected) => selected}
+                MenuProps = {MenuProps}
+              >
+                {staffs.map((staff) => (
+                  <MenuItem key={staff.user_id} 
+                    // value={`${staff.first_name} ${staff.last_name}`}
+                    value={staff}
+                  >
+                    <ListItemText primary={`${staff.first_name} ${staff.last_name}`} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
+
           <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}
           >
             <InputLabel id="demo-simple-select-label">Alert Levels</InputLabel>

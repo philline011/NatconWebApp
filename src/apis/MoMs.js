@@ -195,3 +195,11 @@ export function getEarthquakeEventsForLast24hrs(json_data, callback) {
             console.log(error);
         });
 }
+
+export const getStaffs = (callback) => {
+    axios.get(`${API_URL}/api/misc/get_all_staff_users`).then((response) => {
+        callback(response.data)
+    }).catch((error) => {
+    
+    });
+}
