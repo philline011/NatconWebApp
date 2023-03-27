@@ -20,7 +20,7 @@ import { sendMessage, insertOnDemandToDb, getEarthquakeEventsForLast24hrs, check
 import PromptModal from './PromptModal';
 
 function OnDemandModal(props) {
-    const { isOpen, setOpenModal, generateDashboardData, setNotifMessage,
+    const { isOpen, setOpenModal, generateDashboardData, setNotifMessage, notifMessage,
         setIsOpenPromptModal, setAlertVariant } = props;
     const [alert_level, setAlertLevel] = useState("");
     const [request_ts, setRequestTs] = useState("");
