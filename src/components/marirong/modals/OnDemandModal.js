@@ -38,6 +38,7 @@ function OnDemandModal(props) {
       }, []);
 
     const [openPrompt, setOpenPrompt] = useState(false)
+    const [notifMessage, setNotifMessage] = useState("")
     const [promptTitle, setPromptTitle] = useState("")
     const [errorPrompt, setErrorPrompt] = useState(false)
 
