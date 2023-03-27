@@ -30,6 +30,12 @@ function OnDemandModal(props) {
     const [trigger_type, setTrigerType] = useState("");
     const [earthquake_events, setEarthquakeEvents] = useState("");
     const [earthquake_id, setEarthquakeId] = useState("0");
+    const [userId, setUserId] = useState(null);
+
+    useEffect(() => {
+        let credentials = JSON.parse(localStorage.getItem('credentials'));
+        setUserId(credentials.user.user_id)
+      }, []);
 
     const [openPrompt, setOpenPrompt] = useState(false)
     const [promptTitle, setPromptTitle] = useState("")
@@ -45,7 +51,7 @@ function OnDemandModal(props) {
             request_ts: moment(ts).format("YYYY-MM-DD HH:mm:ss"),
             reason,
             tech_info: reason,
-            reporter_id: 1232,
+            reporter_id: userId,
             site_id: 29,
         }
         console.log("input", input)
