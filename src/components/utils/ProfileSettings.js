@@ -11,11 +11,14 @@ import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
 import moment from 'moment';
 import { updateProfile } from '../../apis/ProfileUpdating';
 import { STORAGE_URL } from '../../config';
+import {useNavigate} from 'react-router-dom';
+import Swal from 'sweetalert2'
 
 import PromptModal from '../marirong/modals/PromptModal';
 
 
 const ProfileSettings = () => {
+    let navigate = useNavigate();
 
     const [userID, setUserID] = useState(null);
     const [firstName, setFirstName] = useState('');
@@ -95,7 +98,7 @@ const ProfileSettings = () => {
     const handleUpdate = () => {
         const updatedBday = moment(new Date(birthdate)).format('YYYY-MM-DD');
         const designation_id = designation_list.find(e => e.id === parseInt(designation)).id;
-        console.log(profilePicture.name)
+
         const form_data = new FormData();
         form_data.append('id', userID);
         form_data.append('firstname', firstName);
@@ -108,7 +111,9 @@ const ProfileSettings = () => {
         form_data.append('kaarawan', updatedBday);
         form_data.append('nickname', firstName);
         form_data.append('mobile_number', mobileNum);
-        form_data.append('file', profilePicture);
+        if (profilePicture != null) {
+            form_data.append('file', profilePicture);
+        }
         
 
         const input = {
@@ -123,7 +128,7 @@ const ProfileSettings = () => {
         const prof_input = {
             address: address,
             designation_id: designation_id,
-            pic_path: profilePicture.name,
+            pic_path: profilePicture != null ? profilePicture.name : "N/A",
         }
         
         updateProfile(form_data, data => {
@@ -138,15 +143,18 @@ const ProfileSettings = () => {
                 updated_input.user = {...updated_input.user, ...input}
                 updated_input.profile = {...updated_input.profile, ...prof_input}
                 localStorage.setItem('credentials', JSON.stringify(updated_input))
-                // window.location.reload(true)
-
-                setOpenPrompt(true)
-                setErrorPrompt(false)
-                setPromptTitle("Success")
-                setNotifMessage(message)
-                console.log("Success!", message)
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: message
+                })
+                navigate('/opcen');
             } else {
-                console.log("Failed!", message)
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: message
+                })
             }
 
         })

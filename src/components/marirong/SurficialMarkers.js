@@ -24,6 +24,8 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 
+import { useSnackbar } from "notistack";
+
 const MenuProps = {
   PaperProps: {
     style: {
@@ -32,6 +34,7 @@ const MenuProps = {
     },
   },
 };
+
 
 const SurficialMarkers = (props) => {
   const [open, setOpen] = useState(false);
@@ -65,10 +68,18 @@ const SurficialMarkers = (props) => {
     reporterOther: "",
     type: ""
   })
-  const [newName, setNewName] = useState(false)
+  const [newName, setNewName] = useState(false);
+
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   useEffect(() => {
-    fetchAll()
+    fetchAll();
+  }, []);
+  
+  useEffect(() => {
+    setInterval(()=> {
+      fetchAll();
+    }, 10000)
   }, [])
 
 
@@ -83,13 +94,12 @@ const SurficialMarkers = (props) => {
 
     getSurficialData(submitData, (response) => {
       setSurficialData(response)
-      makeTable(response)
+      makeTable(response);
     })
 
     getStaffs((response)=>{
       setStaffs(response.data)
     })
-
   }
 
   const makeTable = (data) => {
@@ -204,6 +214,23 @@ const SurficialMarkers = (props) => {
                 meas_type: m.meas_type
               })
               break;
+            case 'E':
+                tempTable.push({
+                  id: marker.marker_id,
+                  mo_id: m.mo_id,
+                  timestamp: m.x,
+                  date: moment.unix(m.x / 1000).format("MMMM DD, YYYY"),
+                  time: moment.unix(m.x / 1000).format("hh:mm"),
+                  person: m.observer_name,
+                  markerA: "",
+                  markerB: "",
+                  markerC: "",
+                  markerD: "",
+                  markerE: m.y,
+                  weather: m.weather,
+                  meas_type: m.meas_type
+                })
+                break;
           }
         }
 
@@ -360,6 +387,9 @@ const SurficialMarkers = (props) => {
     selectableRows: false,
     filterType: 'dropdown',
     responsive: 'vertical',
+    downloadOptions: {
+      filename: `surficial_marker_data_${moment().format("YYYY-MM-DD")}`
+    }, 
     // onRowsDelete: rowsDeleted => {
     // const idsToDelete = rowsDeleted.data.map (item => item.dataIndex)
     // handleMuiTableBatchDelete(idsToDelete.sort());
@@ -528,6 +558,29 @@ const SurficialMarkers = (props) => {
               InputProps={{
                 endAdornment: <InputAdornment position="end">cm</InputAdornment>,
               }}
+            />
+          </Box>
+          <Box
+            container
+            flexDirection={'row'}
+            paddingBottom={2}
+            justifyContent={"space-between"}>
+            <TextField
+                autoFocus
+                error={(incomplete && measurement.E == "") ? true : false}
+                helperText={(incomplete && measurement.E == "") ? "required" : ""}
+                label="Marker E"
+                variant="outlined"
+                defaultValue={measurement.E}
+                style={{ width: "23%", marginLeft: "1%", marginRight: "1%" }}
+                onChange={e => {
+                  let temp = { ...measurement }
+                  temp.E = e.target.value
+                  setMeasurement(temp)
+                }}
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">cm</InputAdornment>,
+                }}
             />
           </Box>
           <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}

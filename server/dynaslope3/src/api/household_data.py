@@ -1,4 +1,5 @@
 import traceback
+from datetime import date, datetime
 from flask import Blueprint, jsonify, request
 import json
 from connection import DB
@@ -188,6 +189,149 @@ def get_disability():
     finally:
         return jsonify(return_value)
 
+@HOUSEHOLD_DATA_BLUEPRINT.route("/household_data/get_seniors", methods=["GET"])
+def get_seniors():
+    try:
+        data = list()
+        seniors_query = text(f"SELECT * FROM commons_db.household_data;")
+        seniors = DB.engine.execute(seniors_query)
+        for row in seniors:
+            head_age = calculate_age(row['birthdate'])
+            if head_age >= 60:
+                data.append({
+                    "members": row[8],
+                    "disability": row[6],
+                    "comorbidity": row[7],
+                    "household_id": row[1],
+                    "birthdate": row[4],
+                    "gender": row[3],
+                    "pregnant": row[5],
+                    "household_head": row[2],
+                    "id": row[0]
+                })
+            for member in json.loads(row['members']):
+                member_age = calculate_age(datetime.strptime(member['birthdate'], '%Y-%m-%d'))
+                if member_age >= 60:
+                    temp = {
+                        "members": row[8],
+                        "disability": row[6],
+                        "comorbidity": row[7],
+                        "household_id": row[1],
+                        "birthdate": row[4],
+                        "gender": row[3],
+                        "pregnant": row[5],
+                        "household_head": row[2],
+                        "id": row[0]
+                    }
+                    if temp not in data:
+                        data.append(temp)
+        return_value = {
+            "status": True,
+            "data": data
+        }
+    except Exception as err:
+        return_value = {
+            "status": False,
+            "message": "Failed to fetch Household data. Please check your network connection.",
+        }
+    finally:
+        return jsonify(return_value)
+
+@HOUSEHOLD_DATA_BLUEPRINT.route("/household_data/get_children", methods=["GET"])
+def get_children():
+    try:
+        data = list()
+        seniors_query = text(f"SELECT * FROM commons_db.household_data;")
+        seniors = DB.engine.execute(seniors_query)
+        for row in seniors:
+            head_age = calculate_age(row['birthdate'])
+            if head_age <= 12 and head_age >= 6:
+                data.append({
+                    "members": row[8],
+                    "disability": row[6],
+                    "comorbidity": row[7],
+                    "household_id": row[1],
+                    "birthdate": row[4],
+                    "gender": row[3],
+                    "pregnant": row[5],
+                    "household_head": row[2],
+                    "id": row[0]
+                })
+            for member in json.loads(row['members']):
+                member_age = calculate_age(datetime.strptime(member['birthdate'], '%Y-%m-%d'))
+                if member_age <= 12 and member_age >= 6:
+                    temp = {
+                        "members": row[8],
+                        "disability": row[6],
+                        "comorbidity": row[7],
+                        "household_id": row[1],
+                        "birthdate": row[4],
+                        "gender": row[3],
+                        "pregnant": row[5],
+                        "household_head": row[2],
+                        "id": row[0]
+                    }
+                    if temp not in data:
+                        data.append(temp)
+        return_value = {
+            "status": True,
+            "data": data
+        }
+    except Exception as err:
+        return_value = {
+            "status": False,
+            "message": "Failed to fetch Household data. Please check your network connection.",
+        }
+    finally:
+        return jsonify(return_value)
+
+@HOUSEHOLD_DATA_BLUEPRINT.route("/household_data/get_toddlers", methods=["GET"])
+def get_toddlers():
+    try:
+        data = list()
+        seniors_query = text(f"SELECT * FROM commons_db.household_data;")
+        seniors = DB.engine.execute(seniors_query)
+        for row in seniors:
+            head_age = calculate_age(row['birthdate'])
+            if head_age <= 5:
+                data.append({
+                    "members": row[8],
+                    "disability": row[6],
+                    "comorbidity": row[7],
+                    "household_id": row[1],
+                    "birthdate": row[4],
+                    "gender": row[3],
+                    "pregnant": row[5],
+                    "household_head": row[2],
+                    "id": row[0]
+                })
+            for member in json.loads(row['members']):
+                member_age = calculate_age(datetime.strptime(member['birthdate'], '%Y-%m-%d'))
+                if member_age <= 5:
+                    temp = {
+                        "members": row[8],
+                        "disability": row[6],
+                        "comorbidity": row[7],
+                        "household_id": row[1],
+                        "birthdate": row[4],
+                        "gender": row[3],
+                        "pregnant": row[5],
+                        "household_head": row[2],
+                        "id": row[0]
+                    }
+                    if temp not in data:
+                        data.append(temp)
+        return_value = {
+            "status": True,
+            "data": data
+        }
+    except Exception as err:
+        return_value = {
+            "status": False,
+            "message": "Failed to fetch Household data. Please check your network connection.",
+        }
+    finally:
+        return jsonify(return_value)
 
 @HOUSEHOLD_DATA_BLUEPRINT.route("/household_data/get_summary", methods=["GET"])
 def get_summary():
@@ -195,10 +339,37 @@ def get_summary():
         preg_count = 0
         dis_count = 0
         com_count = 0
+        seniors_count = 0
+        children_count = 0
+        toddler_count = 0
         query = "SELECT * FROM commons_db.household_data;"
         entries = DB.engine.execute(query)
 
         for row in entries:
+
+            head_age = calculate_age(row['birthdate'])
+
+            if head_age >= 60:
+                seniors_count = seniors_count + 1
+            
+            if head_age <= 12 and head_age >=6:
+                children_count = children_count + 1
+            
+            if head_age <= 5:
+                toddler_count = toddler_count + 1
+            
+            for member in json.loads(row['members']):
+                member_age = calculate_age(row['birthdate'])
+
+                if member_age >= 60:
+                    seniors_count = seniors_count + 1
+
+                if member_age <= 12 and member_age >=6:
+                    children_count = children_count + 1
+                
+                if member_age <= 5:
+                    toddler_count = toddler_count + 1
+
             if row['pregnant'] == True:
                 preg_count = preg_count + 1
 
@@ -219,12 +390,17 @@ def get_summary():
             for member in json.loads(row['members']):
                 if member['disability'] != None:
                     dis_count = dis_count+1
+            
+            
 
         return_obj = {
             "status": True,
             "pregnant_count": preg_count,
             "disability_count": dis_count,
-            "comorbidity_count": com_count
+            "comorbidity_count": com_count,
+            "seniors_count": seniors_count,
+            "children_count": children_count,
+            "toddler_count": toddler_count
         }
     except Exception as err:
         return_obj = {
@@ -304,4 +480,8 @@ def delete_household_data():
         }
     finally:
         DB.session.close()
-        return jsonify(return_obj)    
+        return jsonify(return_obj)
+
+def calculate_age(born):
+    today = date.today()
+    return today.year - born.year - ((today.month, today.day) < (born.month, born.day))

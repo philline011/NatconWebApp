@@ -140,6 +140,8 @@ const MarirongHeader = () => {
       setValue(3);
     } else if (path_name === '/events') {
       setValue(4);
+    } else {
+      setValue(-1);
     }
   };
 

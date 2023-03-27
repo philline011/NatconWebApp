@@ -22,7 +22,6 @@ import PromptModal from './PromptModal';
 function OnDemandModal(props) {
     const { isOpen, setOpenModal, generateDashboardData,
         setIsOpenPromptModal, setAlertVariant } = props;
-     
     const [alert_level, setAlertLevel] = useState("");
     const [request_ts, setRequestTs] = useState("");
     const [reason, setReason] = useState("");
@@ -55,17 +54,12 @@ function OnDemandModal(props) {
             if (status) {
                 generateDashboardData();
                 setOpenModal(false);
-
-                setOpenPrompt(true)
-                setErrorPrompt(false)
-                setPromptTitle("Success")
-                setNotifMessage(message)
-                console.log("Success!", message)
+                setNotifMessage(message);
+                setIsOpenPromptModal(true);
+                setAlertVariant('success');
             } else {
-                setOpenPrompt(true)
-                setErrorPrompt(true)
-                setPromptTitle("Fail")
-                setNotifMessage("Internal server error. Contact Developers")
+                setIsOpenPromptModal(false);
+                setAlertVariant('error');
             }
         });
     }
