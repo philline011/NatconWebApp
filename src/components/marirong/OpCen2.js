@@ -783,7 +783,7 @@ function OpCen2(props) {
   const [expanded, setExpanded] = React.useState(false);
   const [is_validated, setIsValidated] = useState(false);
   const [is_open_validation_modal, setIsOpenValidationModal] = useState(false);
-  const [is_open_new_alert_modal, setIsOpenNewAlertModal] = useState(false);
+  const [is_open_new_alert_modal, setIsOpenNewAlertModal] = useState(true);
   const [is_open_prompt_modal, setIsOpenPromptModal] = useState(false);
   const [is_open_release_modal, setIsOpenReleaseModal] = useState(false);
   const [is_open_disseminate_modal, setIsOpenDisseminateModal] =
