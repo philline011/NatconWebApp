@@ -58,10 +58,10 @@ const MarirongHeader = () => {
   };
 
   useEffect(() => {
-    const data = localStorage.getItem('credentials');
-    const parse_data = JSON.parse(data);
-    const profile_picture = parse_data.profile.pic_path !== "" ? `${STORAGE_URL}/${parse_data.profile.pic_path}` : "";
-    setImageUrl(profile_picture)
+    // const data = localStorage.getItem('credentials');
+    // const parse_data = JSON.parse(data);
+    // const profile_picture = parse_data.profile.pic_path !== "" ? `${STORAGE_URL}/${parse_data.profile.pic_path}` : "";
+    // setImageUrl(profile_picture)
   }, []);
 
   useEffect(() => {
@@ -160,30 +160,11 @@ const MarirongHeader = () => {
   return (
     <Fragment>
       <Grid container style={{background: '#16526D'}}>
-        <Grid item xs={4} sm={4} md={4} lg={4}>
+        
+        <Grid item xs={4} sm={4} md={4} lg={2} sx={{marginTop: 2}} >
           <div
             style={{
               textAlign: 'left',
-              height: 'auto',
-              width: '100%',
-              padding: 20,
-            }}>
-            <Typography
-              variant="h5"
-              style={{fontWeight: '600', color: 'white'}}>
-              COMMUNITY-BASED EARLY WARNING SYSTEM FOR LANDSLIDES
-            </Typography>
-            <Typography
-              variant="h6"
-              style={{fontWeight: '300', color: 'white'}}>
-              Brgy. Marirong, Leon, Iloilo
-            </Typography>
-          </div>
-        </Grid>
-        <Grid item xs={4} sm={4} md={4} lg={6} sx={{marginTop: 2}}>
-          <div
-            style={{
-              textAlign: 'center',
               height: 'auto',
               width: '100%',
               padding: 10,
@@ -193,8 +174,8 @@ const MarirongHeader = () => {
               alt="dost-seal-png"
               style={{
                 objectFit: 'contain',
-                height: 75,
-                width: 75,
+                height: 100,
+                width: 100,
                 marginRight: 8,
               }}
             />
@@ -203,12 +184,12 @@ const MarirongHeader = () => {
               alt="dynaslope-seal-mini-png"
               style={{
                 objectFit: 'contain',
-                height: 75,
-                width: 75,
-                marginRight: 8,
+                height: 100,
+                width: 100,
+                
               }}
             />
-            <img
+            {/* <img
               src={ilolo_province_seal}
               alt="ilolo_province_seal"
               style={{
@@ -247,7 +228,32 @@ const MarirongHeader = () => {
                 width: 70,
                 marginRight: 8,
               }}
-            />
+            /> */}
+          </div>
+        </Grid>
+        <Grid item xs={4} sm={4} md={4} lg={8} sx={{marginTop: 2}}>
+          <div
+            style={{
+              textAlign: 'center',
+              height: 'auto',
+              width: '100%',
+              padding: 20,
+            }}>
+            <Typography
+              variant="h5"
+              style={{fontWeight: '600', color: 'white', fontSize: 30 }}>
+              COMMUNITY-BASED EARLY WARNING SYSTEM
+            </Typography>
+            <Typography
+              variant="h5"
+              style={{fontWeight: '600', color: 'white', fontSize: 30 }}>
+              FOR LANDSLIDES
+            </Typography>
+            {/* <Typography
+              variant="h6"
+              style={{fontWeight: '300', color: 'white'}}>
+              Brgy. Marirong, Leon, Iloilo
+            </Typography> */}
           </div>
         </Grid>
         <Grid item xs={4} sm={4} md={4} lg={2}>
