@@ -759,7 +759,7 @@ function SubsurfaceGraph(props) {
 
   let ts_end = "";
   let dt_ts_end;
-  let tsm_sensor = sensor;
+  let tsm_sensor = "test";
 
   const default_range_info = { label: "3 days", unit: "days", duration: 3 };
   const [selected_range_info, setSelectedRangeInfo] = useState(default_range_info);
@@ -794,10 +794,13 @@ function SubsurfaceGraph(props) {
   useEffect(() => {
     setProcessedData([]);
     setCommsHealthOption(null);
-    getSubsurfacePlotData(input, subsurface_data => {
+    // getSubsurfacePlotData(input, subsurface_data => {
+      let subsurface_data = require('../analysis/json_data/subsurface.json')
+      console.log(subsurface_data)
       const processed = [];
       subsurface_data.forEach(({ type, data }) => {
-        const sub = JSON.parse(JSON.stringify(data));
+        // const sub = JSON.parse(JSON.stringify(data));
+        const sub = data
         let temp = [];
         if (type === "column_position") temp = plotColumnPosition(sub, type);
         else if (type === "displacement") temp = plotDisplacement(sub, type);
@@ -810,7 +813,7 @@ function SubsurfaceGraph(props) {
       });
 
       setProcessedData(processed);
-    });
+    // });
   }, [selected_range_info, selected_hour_interval]);
 
   useEffect(() => {

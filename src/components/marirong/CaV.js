@@ -61,165 +61,24 @@ const CaV = () => {
     let tempChildrenList = []
     let tempToddlerList = []
     
-    getAllHouseholds((response)=>{
-      console.log("adadasdadsa",response)
-
-      if(response.status){
-        response.data.map((household) => {
-          households.push({
-            house_hold_no: household.household_id,
-            head: household.household_head,
-            count: household.members.length,
-            birthday: household.birthdate,
-            gender: household.gender,
-            pregnant: household.pregnant,
-            disability: household.disability,
-            comorbidity: household.comorbidity,
-            members: household.members,
-            id: household.id
-          })
+    let response = require('../marirong/households.json')
+    if(response.status){
+      response.data.map((household) => {
+        households.push({
+          house_hold_no: household.household_id,
+          head: household.household_head,
+          count: household.members.length,
+          birthday: household.birthdate,
+          gender: household.gender,
+          pregnant: household.pregnant,
+          disability: household.disability,
+          comorbidity: household.comorbidity,
+          members: household.members,
+          id: household.id
         })
-        setHouseholdData(households)
-      }
-    })
-
-    getSummary((response)=>{
-      if(response.status){
-        tempVulnerableCount.pregnant = response.pregnant_count
-        tempVulnerableCount.disabled = response.disability_count
-        tempVulnerableCount.comorbid = response.comorbidity_count
-        tempVulnerableCount.senior = response.senior_count
-        tempVulnerableCount.children = response.children_count
-        tempVulnerableCount.toddler = response.toddler_count
-        setVulnerableCount(tempVulnerableCount)
-      }
-    })
-
-    getPregnant((response)=>{
-      if(response.status){
-        response.data.map((household) => {
-          let members = JSON.parse(household.members)
-          tempPregnantList.push({
-            house_hold_no: household.household_id,
-            head: household.household_head,
-            count: members.length,
-            birthday: household.birthdate,
-            gender: household.gender,
-            pregnant: household.pregnant,
-            disability: household.disability,
-            comorbidity: household.comorbidity,
-            members: members,
-            id: household.id
-          })
-        })
-        setPregnantList(tempPregnantList)
-      }
-    })
-
-    getDisabled((response)=>{
-      if(response.status){
-        response.data.map((household) => {
-          let members = JSON.parse(household.members)
-          tempDisabledList.push({
-            house_hold_no: household.household_id,
-            head: household.household_head,
-            count: members.length,
-            birthday: household.birthdate,
-            gender: household.gender,
-            pregnant: household.pregnant,
-            disability: household.disability,
-            comorbidity: household.comorbidity,
-            members: members,
-            id: household.id
-          })
-        })
-        setDisabledList(tempDisabledList)
-      }
-    })
-
-    getComorbid((response)=>{
-      if(response.status){
-        response.data.map((household) => {
-          let members = JSON.parse(household.members)
-          tempComorbidList.push({
-            house_hold_no: household.household_id,
-            head: household.household_head,
-            count: members.length,
-            birthday: household.birthdate,
-            gender: household.gender,
-            pregnant: household.pregnant,
-            disability: household.disability,
-            comorbidity: household.comorbidity,
-            members: members,
-            id: household.id
-          })
-        })
-        setComorbidList(tempComorbidList)
-      }
-    })
-
-    getSenior((response)=>{
-      if(response.status){
-        response.data.map((household) => {
-          let members = JSON.parse(household.members)
-          tempSeniorList.push({
-            house_hold_no: household.household_id,
-            head: household.household_head,
-            count: members.length,
-            birthday: household.birthdate,
-            gender: household.gender,
-            pregnant: household.pregnant,
-            disability: household.disability,
-            comorbidity: household.comorbidity,
-            members: members,
-            id: household.id
-          })
-        })
-        setSeniorList(tempSeniorList)
-      }
-    })
-
-    getChildren((response)=>{
-      if(response.status){
-        response.data.map((household) => {
-          let members = JSON.parse(household.members)
-          tempChildrenList.push({
-            house_hold_no: household.household_id,
-            head: household.household_head,
-            count: members.length,
-            birthday: household.birthdate,
-            gender: household.gender,
-            pregnant: household.pregnant,
-            disability: household.disability,
-            comorbidity: household.comorbidity,
-            members: members,
-            id: household.id
-          })
-        })
-        setChildrenList(tempChildrenList)
-      }
-    })
-
-    getToddler((response)=>{
-      if(response.status){
-        response.data.map((household) => {
-          let members = JSON.parse(household.members)
-          tempToddlerList.push({
-            house_hold_no: household.household_id,
-            head: household.household_head,
-            count: members.length,
-            birthday: household.birthdate,
-            gender: household.gender,
-            pregnant: household.pregnant,
-            disability: household.disability,
-            comorbidity: household.comorbidity,
-            members: members,
-            id: household.id
-          })
-        })
-        setToddlerList(tempToddlerList)
-      }
-    })
+      })
+      setHouseholdData(households)
+    }
 
   }
 
@@ -241,22 +100,26 @@ const CaV = () => {
       filename: `household_data_${moment().format("YYYY-MM-DD")}`
     }, 
     onRowsDelete: rowsDeleted => {
-      const idsToDelete = rowsDeleted.data.map (item => item.dataIndex)
+      const selected = rowsDeleted.data.map (item => item.dataIndex)
+
+      let idsToDelete = []
+      selected.forEach(element => {
+        idsToDelete.push(householdData[element].id)
+      });
 
       idsToDelete.forEach(element => {
-        handleDelete(householdData[element].id)
+        handleDelete(element)
       });
 
       setOpenPrompt(true);
       setErrorPrompt(false);
       setPromptTitle("Success");
       setNotifMessage("Successfully delete household data.");
-      // handleMuiTableBatchDelete(idsToDelete.sort());
+      // handleMuiTableBatchDelete(selected.sort());
     },
   };
 
 
-  //Dummy dialog and data
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -356,42 +219,54 @@ const CaV = () => {
     console.log("submit data uwu",submitData)
 
     if(action=="add"){
-      addHousehold(submitData, (response) => {
-        if(response.status == true){
-          initialize()
-          setOpenModal(false)
-          setOpenPrompt(true)
-          setErrorPrompt(false)
-          setPromptTitle("Success")
-          setNotifMessage(response.message)
-          fetchAll()
-        }
-        else{
-          setOpenPrompt(true)
-          setErrorPrompt(true)
-          setPromptTitle("Fail")
-          setNotifMessage(response.message)
-        }
+      
+      let temp = householdData
+      
+      temp.push({
+        id: temp.length,
+        house_hold_no: submitData.household_id,
+        head: submitData.household_head,
+        birthday: submitData.birthdate,
+        gender: submitData.gender,
+        pregnant: submitData.pregnant,
+        disability: submitData.disability,
+        comorbidity: submitData.comorbidity,
+        members: submitData.members,
+        count: submitData.members.length,
       })
+      setHouseholdData(temp)
+
+      initialize()
+      setOpenModal(false)
+      setOpenPrompt(true)
+      setErrorPrompt(false)
+      setPromptTitle("Success")
+      setNotifMessage("New household data added successfully")
     }
     else if(action=="edit"){
-      editHousehold(submitData, (response) => {
-        if(response.status == true){
-          initialize()
-          setOpenModal(false)
-          setOpenPrompt(true)
-          setErrorPrompt(false)
-          setPromptTitle("Success")
-          setNotifMessage(response.message)
-          fetchAll()
-        }
-        else{
-          setOpenPrompt(true)
-          setErrorPrompt(true)
-          setPromptTitle("Fail")
-          setNotifMessage(response.message)
-        }
-      })
+      let temp = householdData
+
+      console.log(householdData)
+      console.log(submitData)
+      let index = temp.findIndex(household => household.id == submitData.id)
+      temp[index].id = submitData.id
+      temp[index].house_hold_no = submitData.household_id
+      temp[index].head = submitData.household_head
+      temp[index].birthday = submitData.birthdate
+      temp[index].gender = submitData.gender
+      temp[index].pregnant = submitData.pregnant
+      temp[index].disability = submitData.disability
+      temp[index].comorbidity = submitData.comorbidity
+      temp[index].members = submitData.members
+      temp[index].count = submitData.members.length
+
+      setHouseholdData(temp)
+      initialize()
+      setOpenModal(false)
+      setOpenPrompt(true)
+      setErrorPrompt(false)
+      setPromptTitle("Success")
+      setNotifMessage("Household data successfully updated")
     }
 
   }
@@ -447,34 +322,26 @@ const CaV = () => {
   }
 
   const handleDelete = (passedId = null) => {
+    console.log("passed id",passedId)
     let id_to_delete = null;
     if (passedId === null) {
       id_to_delete = deleteID.id;
     } else {
       id_to_delete = passedId;
     }
-    deleteHousehold({id: id_to_delete}, (response) => {
-      if(response.status == true){
-        initialize()
-          if (passedId != null) {
-            setOpenModal(false)
-            setOpenPrompt(true)
-            setErrorPrompt(false)
-            setPromptTitle("Success")
-            setNotifMessage(response.message)
-          }
-        fetchAll()
-      }
-      else{
-        if (passedId != null) {
-          setOpenPrompt(true)
-          setErrorPrompt(true)
-          setPromptTitle("Fail")
-          setNotifMessage(response.message)
-        }
-        initialize()
-      }
-    })
+    
+    console.log("to delete",id_to_delete)
+    let temp = householdData
+    let index = temp.findIndex(household => household.id == id_to_delete)
+    temp.splice(index,1)
+    setHouseholdData(temp)
+
+    setOpenModal(false)
+    setOpenPrompt(true)
+    setErrorPrompt(false)
+    setPromptTitle("Success")
+    setNotifMessage("Household data successfully deleted")
+    initialize()
   }
 
   return (
