@@ -722,8 +722,9 @@ function SubsurfaceGraphContainer(props) {
   const [subsurface_columns, setSubsurfaceColumns] = useState([])
 
   useEffect(() => {
-    getSiteSubsurfaceColumns("mar", data => {
+    // getSiteSubsurfaceColumns("mar", data => {
       const temp = [];
+      const data = require('./json_data/subsurface.json')
       data.forEach((row) => {
         const { tsm_name } = row;
         console.log(row);
@@ -735,7 +736,7 @@ function SubsurfaceGraphContainer(props) {
       })
       console.log(temp)
       setSubsurfaceColumns(temp)
-    })
+    // })
   }, []);
   return (
     <Fragment>
@@ -795,8 +796,7 @@ function SubsurfaceGraph(props) {
     setProcessedData([]);
     setCommsHealthOption(null);
     // getSubsurfacePlotData(input, subsurface_data => {
-      let subsurface_data = require('../analysis/json_data/subsurface.json')
-      console.log(subsurface_data)
+      let subsurface_data = require('./json_data/subsurface.json')
       const processed = [];
       subsurface_data.forEach(({ type, data }) => {
         // const sub = JSON.parse(JSON.stringify(data));
