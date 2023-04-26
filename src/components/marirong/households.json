@@ -1,0 +1,84 @@
+{
+  "status": true, 
+  "data": [
+    {
+      "birthdate": "1978-04-25", 
+      "id": 2, 
+      "household_id": "01", 
+      "disability": null, 
+      "comorbidity": null, 
+      "members": [
+        {
+          "gender": "M", 
+          "pregnant": false, 
+          "birthdate": "2001-04-25", 
+          "disability": null, 
+          "comorbidity": null, 
+          "household_member": "Ben"
+        }, 
+        {
+          "gender": "F", 
+          "pregnant": false, 
+          "birthdate": "2014-04-25", 
+          "disability": null, 
+          "comorbidity": null, 
+          "household_member": "Sam"
+        }
+      ], 
+      "gender": "F", 
+      "pregnant": false, 
+      "household_head": "Aling Vicky"
+    }, 
+    {
+      "birthdate": "1981-04-09", 
+      "id": 3, 
+      "household_id": "02", 
+      "disability": null, 
+      "comorbidity": "High Blood", 
+      "members": [
+        {
+          "gender": "F", 
+          "pregnant": true, 
+          "birthdate": "1997-04-25", 
+          "disability": null, 
+          "comorbidity": null, 
+          "household_member": "Ginny Weasley"
+        }
+      ], 
+      "gender": "M", 
+      "pregnant": false, 
+      "household_head": "Harry Potter"
+    }, 
+    {
+      "birthdate": "1997-11-05", 
+      "id": 4, 
+      "household_id": "03", 
+      "disability": null, 
+      "comorbidity": null, 
+      "members": [
+        {
+          "gender": "F", 
+          "pregnant": false, 
+          "birthdate": "2021-09-03", 
+          "disability": null, 
+          "comorbidity": null, 
+          "household_member": "Philline Marie"
+        }
+      ], 
+      "gender": "F", 
+      "pregnant": false, 
+      "household_head": "Carla Joy"
+    }, 
+    {
+      "birthdate": "1998-03-18", 
+      "id": 5, 
+      "household_id": "04", 
+      "disability": null, 
+      "comorbidity": null, 
+      "members": [], 
+      "gender": "F", 
+      "pregnant": false, 
+      "household_head": "Sam Samodio"
+    }
+  ]
+}

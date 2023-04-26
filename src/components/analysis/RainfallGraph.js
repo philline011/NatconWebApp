@@ -562,9 +562,11 @@ function RainfallGraph(props) {
 
     const getDataFn = () => {
         setProcessedData([]);
-        getRainfallPlotData(input, data => {
-            setRainfallData(data);
-        });
+        // getRainfallPlotData(input, data => {
+        //     setRainfallData(data);
+        // });
+        setRainfallData(require('../analysis/json_data/rainfall.json'))
+
     };
 
     useEffect(() => {
