@@ -33,11 +33,12 @@ const Analysis = (props) => {
   const [instances, setInstances] = useState([])
   
   const reloadTable = () => {
-    getInstances((response) => {
-      if (response) {
-        setInstances(response)
-      }
-    })
+    // getInstances((response) => {
+    //   if (response) {
+    //     setInstances(response)
+    //   }
+    // })
+    setInstances(require('./moms_instances.json'))
 
   }
 
