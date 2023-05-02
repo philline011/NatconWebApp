@@ -10,7 +10,7 @@ export const getSurficialData = (data, callback) => {
 }
 
 export const sendMeasurement = (data, callback) => {
-    axios.post(`${API_URL}/api/surficial/insert_web`, data).then((response) => {
+    axios.post(`192.168.150.118:5000/api/surficial/insert_web`, data).then((response) => {
         callback(response.data)
     }).catch((error) => {
 

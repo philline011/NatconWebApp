@@ -77,7 +77,7 @@ const App = props => {
             /> */}
           </Routes>
 
-          {(localStorage.getItem('credentials') != null) ? 
+          {/* {(localStorage.getItem('credentials') != null) ?  */}
             <Routes>
               <Route exact path="/opcen" element={<OpCen2 />} /> 
               <Route exact path="/bulletin" element={<Bulletin />} />
@@ -110,10 +110,10 @@ const App = props => {
               />
               <Route exact path="/moms" element={<Moms />} />
             </Routes>
-            : 
+            {/* : 
             (window.location.pathname != "/" && window.location.pathname != "/signin" && window.location.pathname != "/feedback") &&
               (window.location = "/")
-            }
+            } */}
             
         </Router>
       </SnackbarProvider>
