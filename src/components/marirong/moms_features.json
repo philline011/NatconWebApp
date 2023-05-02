@@ -1,0 +1,230 @@
+{
+    "status": true, 
+    "data": [
+      {
+        "alerts": [
+          {
+            "feature_id": 1, 
+            "feature_alert_id": 1, 
+            "alert_level": 0, 
+            "description": null
+          }, 
+          {
+            "feature_id": 1, 
+            "feature_alert_id": 9, 
+            "alert_level": 2, 
+            "description": "A new crack is observed near the area or within the hazard zone."
+          }, 
+          {
+            "feature_id": 1, 
+            "feature_alert_id": 10, 
+            "alert_level": 3, 
+            "description": "The length or number of new crack/s occupy more than half of the landslide source."
+          }
+        ], 
+        "feature_id": 1, 
+        "feature_type": "crack", 
+        "instances": [
+          {
+            "location": "gilid ng school", 
+            "site_id": 29, 
+            "instance_id": 163, 
+            "feature_name": "A"
+          }
+        ], 
+        "description": null
+      }, 
+      {
+        "alerts": [
+          {
+            "feature_id": 2, 
+            "feature_alert_id": 2, 
+            "alert_level": 0, 
+            "description": null
+          }, 
+          {
+            "feature_id": 2, 
+            "feature_alert_id": 11, 
+            "alert_level": 2, 
+            "description": "A new scarp is observed near the area or within the hazard zone."
+          }, 
+          {
+            "feature_id": 2, 
+            "feature_alert_id": 12, 
+            "alert_level": 3, 
+            "description": "The length or number of new scarp/s occupy more than half of the landslide source."
+          }
+        ], 
+        "feature_id": 2, 
+        "feature_type": "scarp", 
+        "instances": [
+          {
+            "location": "test", 
+            "site_id": 29, 
+            "instance_id": 164, 
+            "feature_name": "C"
+          }
+        ], 
+        "description": null
+      }, 
+      {
+        "alerts": [
+          {
+            "feature_id": 3, 
+            "feature_alert_id": 3, 
+            "alert_level": 0, 
+            "description": null
+          }, 
+          {
+            "feature_id": 3, 
+            "feature_alert_id": 13, 
+            "alert_level": 3, 
+            "description": "Seepage/s observed along with other landslide features; new seepages observed on slope; flow rate of water is faster than normal."
+          }
+        ], 
+        "feature_id": 3, 
+        "feature_type": "seepage", 
+        "instances": [], 
+        "description": null
+      }, 
+      {
+        "alerts": [
+          {
+            "feature_id": 4, 
+            "feature_alert_id": 4, 
+            "alert_level": 0, 
+            "description": null
+          }, 
+          {
+            "feature_id": 4, 
+            "feature_alert_id": 14, 
+            "alert_level": 3, 
+            "description": "Ponding observed along with other landslide features; new pondings observed on slope; water rise with a fast rate on ponding."
+          }
+        ], 
+        "feature_id": 4, 
+        "feature_type": "ponding", 
+        "instances": [], 
+        "description": null
+      }, 
+      {
+        "alerts": [
+          {
+            "feature_id": 5, 
+            "feature_alert_id": 5, 
+            "alert_level": 0, 
+            "description": null
+          }, 
+          {
+            "feature_id": 5, 
+            "feature_alert_id": 15, 
+            "alert_level": 2, 
+            "description": "Tilting or halving of several trees along with the appearance of other landslide manifestations like crack and scarp."
+          }, 
+          {
+            "feature_id": 5, 
+            "feature_alert_id": 16, 
+            "alert_level": 3, 
+            "description": "Tilting, halving, or toppling of many trees."
+          }
+        ], 
+        "feature_id": 5, 
+        "feature_type": "tilted/split trees", 
+        "instances": [], 
+        "description": null
+      }, 
+      {
+        "alerts": [
+          {
+            "feature_id": 6, 
+            "feature_alert_id": 6, 
+            "alert_level": 0, 
+            "description": null
+          }, 
+          {
+            "feature_id": 6, 
+            "feature_alert_id": 17, 
+            "alert_level": 2, 
+            "description": "Appearance of cracks in structures; Parts of structure have noticeable tilting or sinking."
+          }, 
+          {
+            "feature_id": 6, 
+            "feature_alert_id": 18, 
+            "alert_level": 3, 
+            "description": "Many structures are destroyed."
+          }
+        ], 
+        "feature_id": 6, 
+        "feature_type": "damaged structures", 
+        "instances": [], 
+        "description": null
+      }, 
+      {
+        "alerts": [
+          {
+            "feature_id": 7, 
+            "feature_alert_id": 7, 
+            "alert_level": 0, 
+            "description": null
+          }, 
+          {
+            "feature_id": 7, 
+            "feature_alert_id": 19, 
+            "alert_level": 2, 
+            "description": "Small landslide observed near the area or within the hazard zone."
+          }, 
+          {
+            "feature_id": 7, 
+            "feature_alert_id": 20, 
+            "alert_level": 3, 
+            "description": "Massive or numerous landslides observed near the area or within the hazard zone."
+          }
+        ], 
+        "feature_id": 7, 
+        "feature_type": "slope failure", 
+        "instances": [], 
+        "description": null
+      }, 
+      {
+        "alerts": [
+          {
+            "feature_id": 8, 
+            "feature_alert_id": 8, 
+            "alert_level": 0, 
+            "description": null
+          }, 
+          {
+            "feature_id": 8, 
+            "feature_alert_id": 21, 
+            "alert_level": 2, 
+            "description": "There is bulging or depression of land observed near the area or within the hazard zone."
+          }, 
+          {
+            "feature_id": 8, 
+            "feature_alert_id": 22, 
+            "alert_level": 3, 
+            "description": "The area or number of bulging or depression occupy more than half of the landslide source."
+          }
+        ], 
+        "feature_id": 8, 
+        "feature_type": "bulging/depression", 
+        "instances": [], 
+        "description": null
+      }, 
+      {
+        "alerts": [
+          {
+            "feature_id": 9, 
+            "feature_alert_id": 23, 
+            "alert_level": 0, 
+            "description": "No landslide manifestations observed"
+          }
+        ], 
+        "feature_id": 9, 
+        "feature_type": "none", 
+        "instances": [], 
+        "description": "General no new landslide manifestation observed"
+      }
+    ]
+  }
+  

@@ -182,10 +182,11 @@ const Moms = (props) => {
   useEffect(() => {
     setFeatureName("")
 
-    getFeatures((response) => {
-      let tempData = response.data;
+    // getFeatures((response) => {
+    //   let tempData = response.data;
+      let tempData = require('./moms_features.json')
 
-      tempData.map(feature => {
+      tempData.data.map(feature => {
         if (feature.feature_id == selectedFeatureIndex) {
           let tempFeatureNames = [
             {
@@ -207,7 +208,7 @@ const Moms = (props) => {
           setFeatureNames(tempFeatureNames)
         }
       });
-    })
+    // })
 
     setFeatureDetails(selectedFeatureIndex != null ? (feature_list.find((o) => o.feature_id == selectedFeatureIndex)).details : "")
 
@@ -220,14 +221,16 @@ const Moms = (props) => {
 
 
   const reloadTable = () => {
-    getInstances((response) => {
-      if (response) {
-        setInstances(response)
-      }
-    })
-    getStaffs((response)=>{
-      setStaffs(response.data)
-    })
+    // getInstances((response) => {
+    //   if (response) {
+    //     setInstances(response)
+    //   }
+    // })
+    setInstances(require('./moms_instances.json'))
+    // getStaffs((response)=>{
+    //   setStaffs(response.data)
+    // })
+
   }
 
   const handleUpload = (uploadImage) => {
