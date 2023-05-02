@@ -4,99 +4,100 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { getFilesFromFolder, uploadHazardMaps } from '../../apis/Misc';
 import { STORAGE_URL } from '../../config';
-
+import hazard_map from '../../assets/hazard_map_01.jpg'
 
 const HazardMapping = (props) => {
 
-    const directory = `${STORAGE_URL}/assets`
-    const [images, setImages] = useState([]);
-    const handleOpenFolder = () => {
-        getFilesFromFolder("assets", (response) => {
-            setImages(response)
-        });
-    }
+    // const directory = `${STORAGE_URL}/assets`
+    // const [images, setImages] = useState([]);
+    // const handleOpenFolder = () => {
+    //     getFilesFromFolder("assets", (response) => {
+    //         setImages(response)
+    //     });
+    // }
 
-    useEffect(() => {
-        handleOpenFolder()
-    }, [])
-
-
-    const { slides, options } = props
-    const [selectedIndex, setSelectedIndex] = useState(0)
-    const [emblaMainRef, emblaMainApi] = useEmblaCarousel(options)
-    const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
-        containScroll: 'keepSnaps',
-        dragFree: false,
-    })
-
-    const Thumb = (props) => {
-        const { selected, imgSrc, index, onClick, } = props
-        return (
-            <div
-                className={"embla-thumbs__slide".concat(
-                    selected ? "embla-thumbs__slide--selected" : "",
-                )}
-            >
-                <button
-                    onClick={onClick}
-                    className="embla-thumbs__slide__button"
-                    type="button"
-                >
-                    <img
-                        className="embla-thumbs__slide__img"
-                        src={imgSrc}
-                        alt="Your alt text"
-                    />
-                </button>
-
-            </div>
-        )
-    }
-
-    const onThumbClick = useCallback(
-        (index) => {
-            if (!emblaMainApi || !emblaThumbsApi) return
-            if (emblaThumbsApi.clickAllowed()) emblaMainApi.scrollTo(index)
-        },
-        [emblaMainApi, emblaThumbsApi],
-    )
-
-    const onSelect = useCallback(() => {
-        if (!emblaMainApi || !emblaThumbsApi) return
-        setSelectedIndex(emblaMainApi.selectedScrollSnap())
-        emblaThumbsApi.scrollTo(emblaMainApi.selectedScrollSnap())
-    }, [emblaMainApi, emblaThumbsApi, setSelectedIndex])
-
-    useEffect(() => {
-        if (!emblaMainApi) return
-        onSelect()
-        emblaMainApi.on('select', onSelect)
-        emblaMainApi.on('reInit', onSelect)
-    }, [emblaMainApi, onSelect])
+    // useEffect(() => {
+    //     handleOpenFolder()
+    // }, [])
 
 
-    const handleUpload = (uploadImage) => {
-        const formData = new FormData();
-        formData.append('file', uploadImage);
+    // const { slides, options } = props
+    // const [selectedIndex, setSelectedIndex] = useState(0)
+    // const [emblaMainRef, emblaMainApi] = useEmblaCarousel(options)
+    // const [emblaThumbsRef, emblaThumbsApi] = useEmblaCarousel({
+    //     containScroll: 'keepSnaps',
+    //     dragFree: false,
+    // })
 
-        uploadHazardMaps(formData, data => {
-            const { status, message } = data;
-            if (status) {
-                const credentials = localStorage.getItem('credentials')
-                const parsed_credentials = JSON.parse(credentials);
-                const updated_input = { ...parsed_credentials, img_length: images.length + 1 }
-                localStorage.setItem('credentials', JSON.stringify(updated_input))
-                window.location.reload(true)
-            } else {
-                console.log("Error upload", message)
-            }
-        })
-    }
+    // const Thumb = (props) => {
+    //     const { selected, imgSrc, index, onClick, } = props
+    //     return (
+    //         <div
+    //             className={"embla-thumbs__slide".concat(
+    //                 selected ? "embla-thumbs__slide--selected" : "",
+    //             )}
+    //         >
+    //             <button
+    //                 onClick={onClick}
+    //                 className="embla-thumbs__slide__button"
+    //                 type="button"
+    //             >
+    //                 <img
+    //                     className="embla-thumbs__slide__img"
+    //                     src={imgSrc}
+    //                     alt="Your alt text"
+    //                 />
+    //             </button>
+
+    //         </div>
+    //     )
+    // }
+
+    // const onThumbClick = useCallback(
+    //     (index) => {
+    //         if (!emblaMainApi || !emblaThumbsApi) return
+    //         if (emblaThumbsApi.clickAllowed()) emblaMainApi.scrollTo(index)
+    //     },
+    //     [emblaMainApi, emblaThumbsApi],
+    // )
+
+    // const onSelect = useCallback(() => {
+    //     if (!emblaMainApi || !emblaThumbsApi) return
+    //     setSelectedIndex(emblaMainApi.selectedScrollSnap())
+    //     emblaThumbsApi.scrollTo(emblaMainApi.selectedScrollSnap())
+    // }, [emblaMainApi, emblaThumbsApi, setSelectedIndex])
+
+    // useEffect(() => {
+    //     if (!emblaMainApi) return
+    //     onSelect()
+    //     emblaMainApi.on('select', onSelect)
+    //     emblaMainApi.on('reInit', onSelect)
+    // }, [emblaMainApi, onSelect])
+
+
+    // const handleUpload = (uploadImage) => {
+    //     const formData = new FormData();
+    //     formData.append('file', uploadImage);
+
+    //     uploadHazardMaps(formData, data => {
+    //         const { status, message } = data;
+    //         if (status) {
+    //             const credentials = localStorage.getItem('credentials')
+    //             const parsed_credentials = JSON.parse(credentials);
+    //             const updated_input = { ...parsed_credentials, img_length: images.length + 1 }
+    //             localStorage.setItem('credentials', JSON.stringify(updated_input))
+    //             window.location.reload(true)
+    //         } else {
+    //             console.log("Error upload", message)
+    //         }
+    //     })
+    // }
 
     return (
         <Container>
             <Grid container>
-                <Grid item xs={12} sm={12} md={12} lg={12} sx={{ textAlign: "center" }}>
+                
+                {/* <Grid item xs={12} sm={12} md={12} lg={12} sx={{ textAlign: "center" }}>
                     <div className="embla">
                         <div className="embla__viewport" ref={emblaMainRef}>
                             <div className="embla__container">
@@ -137,8 +138,40 @@ const HazardMapping = (props) => {
                             </div>
                         </div>
                     </div>
-                </Grid>
-                <Grid container sx={{ mt: 2, mb: 6, padding: '2%' }}>
+                </Grid> */}
+                 <Grid item xs={8} md={8} sx={{marginTop: 5, marginLeft: 20}}>
+                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <img
+                        src={hazard_map}
+                        alt="hazard-map"
+                        style={{
+                            objectFit: 'contain',
+                            height: '100%',
+                            maxWidth: '1000px',
+                            width: '100%',
+                            
+                        }}
+                    />
+                    </div>
+                    </Grid>
+                 
+                    <Grid item xs={12} sm={12} md={12} lg={12} sx={{textAlign: "center", marginTop: 1, marginBottom: 1}}>
+
+                    <a href={hazard_map} 
+                        style={{ textDecoration: 'none' }}
+                        target="_blank"
+                        rel="noreferrer"
+                         download
+                             >
+                        <Button
+                             variant="contained"
+                             
+                      >
+                        Download
+                         </Button>
+                    </a>
+                     </Grid>
+                {/* <Grid container sx={{ mt: 2, mb: 6, padding: '2%' }}>
                     <Grid item xs={12} sm={12} md={12} lg={7}>
                         <input
                             accept="image/*"
@@ -171,7 +204,7 @@ const HazardMapping = (props) => {
                             </a>
                         )}
                     </Grid>
-                </Grid>
+                </Grid> */}
             </Grid>
         </Container>
     )

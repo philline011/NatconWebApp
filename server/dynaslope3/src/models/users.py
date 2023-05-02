@@ -25,7 +25,7 @@ class Users(DB.Model, UserMixin):
     first_name = DB.Column(DB.String(45))
     middle_name = DB.Column(DB.String(45))
     last_name = DB.Column(DB.String(45))
-    suffix = DB.Column(DB.String(45))
+    # suffix = DB.Column(DB.String(45))
     nickname = DB.Column(DB.String(45))
     sex = DB.Column(DB.String(10))
     status = DB.Column(DB.Integer, nullable=True)

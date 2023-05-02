@@ -9,10 +9,10 @@ in initializing Flask App instance
 # ROOT_HOST = "si:softwareinfra@192.168.150.112"
 
 # sandbox
-# ROOT_HOST = "root:senslope@192.168.150.253"
+ROOT_HOST = "root:senslope@192.168.150.253"
 
 # local
-ROOT_HOST = "david:J0hnd@v!d1234@127.0.0.1"
+# ROOT_HOST = "david:J0hnd@v!d1234@127.0.0.1"
 
 # ASTI Cloud
 # ROOT_HOST = "cbewsl:cb3wsls3rv3r@dynaslope.phivolcs.dost.gov.ph"

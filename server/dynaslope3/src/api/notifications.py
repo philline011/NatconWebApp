@@ -13,13 +13,13 @@ from src.models.mobile_devices import MobileDevices, MobileDevicesSchema
 from connection import DB
 from src.utils.extra import var_checker
 from datetime import datetime, timedelta
-from exponent_server_sdk import (
-    DeviceNotRegisteredError,
-    PushClient,
-    PushMessage,
-    PushServerError,
-    PushTicketError,
-)
+# from exponent_server_sdk import (
+#     DeviceNotRegisteredError,
+#     PushClient,
+#     PushMessage,
+#     PushServerError,
+#     PushTicketError,
+# )
 from requests.exceptions import ConnectionError, HTTPError
 import sys
 sys.setrecursionlimit(30000)
