@@ -542,7 +542,7 @@ const Moms = (props) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={console.log('handleSubmit')}>Submit</Button>
         </DialogActions>
       </Dialog>
 

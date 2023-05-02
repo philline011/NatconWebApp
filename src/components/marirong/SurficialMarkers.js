@@ -476,7 +476,7 @@ const SurficialMarkers = (props) => {
               label="A"
               variant="outlined"
               defaultValue={measurement.A}
-              style={{ width: "18%", marginRight: "1%" }}
+              style={{ width: "31%", marginRight: "1%" }}
               onChange={e => {
                 let temp = { ...measurement }
                 temp.A = e.target.value
@@ -494,7 +494,7 @@ const SurficialMarkers = (props) => {
               label="B"
               variant="outlined"
               defaultValue={measurement.B}
-              style={{ width: "18%", marginLeft: "1%", marginRight: "1%" }}
+              style={{ width: "31%", marginLeft: "1%", marginRight: "1%" }}
               onChange={e => {
                 let temp = { ...measurement }
                 temp.B = e.target.value
@@ -512,7 +512,7 @@ const SurficialMarkers = (props) => {
               label="C"
               variant="outlined"
               defaultValue={measurement.C}
-              style={{ width: "18%", marginLeft: "1%", marginRight: "1%" }}
+              style={{ width: "31%", marginLeft: "1%", marginRight: "1%" }}
               onChange={e => {
                 let temp = { ...measurement }
                 temp.C = e.target.value
@@ -522,65 +522,6 @@ const SurficialMarkers = (props) => {
               InputProps={{
                 endAdornment: <InputAdornment position="end">cm</InputAdornment>,
               }}
-            />
-            <TextField
-              autoFocus
-              error={(incomplete && measurement.D == "") ? true : false}
-              helperText={(incomplete && measurement.D == "") ? "required" : ""}
-              label="D"
-              variant="outlined"
-              defaultValue={measurement.D}
-              style={{ width: "18%", marginLeft: "1%", marginRight: "1%" }}
-              onChange={e => {
-                let temp = { ...measurement }
-                temp.D = e.target.value
-                setMeasurement(temp)
-              }}
-              type="number"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">cm</InputAdornment>,
-              }}
-            />
-            <TextField
-              autoFocus
-              error={(incomplete && measurement.E == "") ? true : false}
-              helperText={(incomplete && measurement.E == "") ? "required" : ""}
-              label="E"
-              variant="outlined"
-              defaultValue={measurement.E}
-              style={{ width: "18%", marginLeft: "1%", marginRight: "1%" }}
-              onChange={e => {
-                let temp = { ...measurement }
-                temp.E = e.target.value
-                setMeasurement(temp)
-              }}
-              type="number"
-              InputProps={{
-                endAdornment: <InputAdornment position="end">cm</InputAdornment>,
-              }}
-            />
-          </Box>
-          <Box
-            container
-            flexDirection={'row'}
-            paddingBottom={2}
-            justifyContent={"space-between"}>
-            <TextField
-                autoFocus
-                error={(incomplete && measurement.E == "") ? true : false}
-                helperText={(incomplete && measurement.E == "") ? "required" : ""}
-                label="Marker E"
-                variant="outlined"
-                defaultValue={measurement.E}
-                style={{ width: "23%", marginLeft: "1%", marginRight: "1%" }}
-                onChange={e => {
-                  let temp = { ...measurement }
-                  temp.E = e.target.value
-                  setMeasurement(temp)
-                }}
-                InputProps={{
-                  endAdornment: <InputAdornment position="end">cm</InputAdornment>,
-                }}
             />
           </Box>
           <FormControl fullWidth style={{ width: '100%', paddingBottom: 15 }}
